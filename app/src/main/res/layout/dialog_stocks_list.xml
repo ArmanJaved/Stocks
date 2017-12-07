@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <LinearLayout
+
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <EditText
+
+            android:id="@+id/et_stock_name"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Search ticker"
+            android:drawableRight="@android:drawable/ic_menu_search"
+            android:layout_margin="10dp"
+            android:textColor="#fff"
+            android:textStyle="normal"
+            android:backgroundTint="#607d8b"
+            android:textColorHint="#607d8b"
+            android:textSize="18sp"
+            android:inputType="textPersonName"
+            />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rc_stock"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_margin="10dp">
+    </android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+</LinearLayout>

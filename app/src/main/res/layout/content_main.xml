@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.brainplow.stocks.MainActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#607d8b"
+        app:popupTheme="@style/AppTheme.PopupOverlay">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <EditText
+            android:layout_weight="1"
+            android:hint="Search ticker"
+            android:textColor="#fff"
+            android:id="@+id/rlt_stock"
+            android:textColorHint="#fff"
+            android:drawableRight="@android:drawable/ic_menu_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+
+
+        </LinearLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="250dp"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:id="@+id/daily"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:textSize="14sp"
+            android:textColor="#000"
+            android:text="Daily"
+            android:textStyle="bold"
+            android:textAlignment="textEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+        <TextView
+            android:id="@+id/weekly"
+            android:layout_weight=".0101"
+            android:padding="10dp"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#000"
+            android:text="Weekly"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+        <TextView
+            android:id="@+id/monthly"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:textSize="14sp"
+            android:textAlignment="textStart"
+            android:textStyle="bold"
+            android:textColor="#000"
+            android:text="Monthly"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+    </LinearLayout>
+
+
+
+
+
+
+
+
+
+    <LinearLayout
+        android:id="@+id/Intradaytime"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content">
+
+            <Spinner
+                android:layout_width="130dp"
+                android:layout_height="35dp"
+                android:id="@+id/spinner1"
+                android:layout_margin="10dp"
+                android:textColor="#fff"
+                android:textStyle="bold"
+                android:entries="@array/country_arrays"
+                android:textSize="25sp"/>
+
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/intra_Text"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:textColor="#78201e"
+        android:text="Intraday"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight=".01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+
+                android:layout_weight=".01"
+                android:id="@+id/tv_stock_name"
+                android:paddingTop="14dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AAME"
+                android:rotation="-40"
+                android:textColor="#3d3d3d"
+                android:textStyle="bold"
+                android:textSize="12sp"/>
+
+
+            <TextView
+
+                android:padding="3dp"
+                android:layout_marginTop="150dp"
+                android:paddingTop="14dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="200k"
+                android:textColor="#3d3d3d"
+                android:textStyle="normal"
+                android:textSize="15sp"/>
+
+            <TextView
+                android:padding="3dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100k"
+                android:textColor="#3d3d3d"
+                android:textStyle="normal"
+                android:textSize="15sp"/>
+
+            <TextView
+                android:padding="3dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="50k"
+                android:textColor="#3d3d3d"
+                android:textStyle="normal"
+                android:textSize="15sp"/>
+        </LinearLayout>
+
+
+
+    <com.github.mikephil.charting.charts.CandleStickChart
+        android:layout_weight="1"
+        android:layout_marginTop="10dp"
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="300dp">
+
+    </com.github.mikephil.charting.charts.CandleStickChart>
+
+
+        <TextView
+            android:layout_weight=".01"
+            android:paddingTop="14dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="s"
+            android:rotation="-40"
+            android:textColor="#fff"
+            android:textStyle="bold"
+            android:textSize="15sp"/>
+    </LinearLayout>
+
+   <TextView
+       android:id="@+id/start"
+       android:textAlignment="center"
+       android:textSize="15sp"
+       android:textColor="#000"
+       android:text="Intraday"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_marginTop="10dp"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:text="Add to Watchlist"
+        android:textColor="#607d8b"
+        android:layout_gravity="center"
+        android:background="@drawable/my_button_bg"
+        />
+
+</LinearLayout>

@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Stocks</string>
+    <string name="action_settings">Settings</string>
+
+
+
+    <string-array name="country_arrays">
+        <item>  1 min     </item>
+        <item>  5 mins     </item>
+        <item>  15 mins     </item>
+        <item>  30 mins     </item>
+        <item>  60 mins     </item>
+        <!--<item>  Daily     </item>-->
+        <!--<item>  Weekly     </item>-->
+        <!--<item>  Monthly     </item>-->
+
+    </string-array>
+</resources>

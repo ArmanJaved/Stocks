@@ -1,0 +1,134 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+
+            <LinearLayout
+                android:padding="10dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/asp_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Marshmallow"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_marginTop="0dp"
+                    android:textColor="@android:color/black" />
+
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textSize="30sp"
+                    android:id="@+id/mentions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="4"
+                    android:visibility="gone"
+                    android:textColor="#ca3232" />
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/usage"
+                android:padding="10dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content">
+
+                <TextView
+
+                    android:id="@+id/positive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:visibility="gone"
+                    android:textColor="@android:color/black"
+                    android:textAppearance="?android:attr/textAppearanceButton"
+                    android:textStyle="normal" />
+                <TextView
+                    android:id="@+id/negative"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="change"
+                    android:layout_marginTop="5dp"
+                    android:textAllCaps="false"
+                    android:textColor="#63bd55"
+                    android:textAppearance="?android:attr/textAppearanceButton"
+                    android:textStyle="normal" />
+                <TextView
+                    android:id="@+id/netural"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Volume"
+                    android:visibility="gone"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/black"
+                    android:textAppearance="?android:attr/textAppearanceButton"
+                    android:textStyle="normal" />
+
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="23"
+                    android:textColor="#ca3232"
+                    android:textAppearance="?android:attr/textAppearanceButton"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/third"
+                android:padding="10dp"
+                android:layout_weight=".1"
+                android:orientation="vertical"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_marginTop="1dp"
+                    android:layout_gravity="end"
+                    android:text="45.0"
+                    android:textColor="#607d8b"
+                    android:id="@+id/asp_Rate"
+                    android:textSize="15sp"
+                    android:textStyle="normal"
+                    android:textAppearance="?android:attr/textAppearanceButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+</LinearLayout>
+
+</LinearLayout>
+

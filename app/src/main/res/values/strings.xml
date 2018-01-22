@@ -15,4 +15,9 @@
         <!--<item>  Monthly     </item>-->
 
     </string-array>
+
+
+    <string name="open_drawer">Open</string>
+    <string name="close_drawer">Close</string>
+    <string name="home">Home</string>
 </resources>

@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -49,8 +50,11 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mindorks.placeholderview.PlaceHolderView;
 import com.stocksymbolapp.R;
 
@@ -72,7 +76,7 @@ import java.util.List;
 
 import dmax.dialog.SpotsDialog;
 
-public class MainActivity extends AppCompatActivity implements OnChartValueSelectedListener, MyMarkerView.ActivityCommunicator {
+public class MainActivity extends AppCompatActivity implements OnChartValueSelectedListener {
     ArrayList<String> labels = new ArrayList<String>();
     ArrayList<Float> labelsforvolume = new ArrayList<Float>();
     ArrayList<CandleEntry> entries = new ArrayList<>();
@@ -143,11 +147,11 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
 
 
         llt_markerview = (LinearLayout) findViewById(R.id.llt_markerview);
-       tv_high = (TextView) findViewById(R.id.tv_high);
+        tv_high = (TextView) findViewById(R.id.tv_high);
         x_time = (TextView)findViewById(R.id.x_time);
-       tv_low = (TextView) findViewById(R.id.tv_low);
-       tv_open = (TextView) findViewById(R.id.tv_open);
-       tv_close = (TextView) findViewById(R.id.tv_close);
+        tv_low = (TextView) findViewById(R.id.tv_low);
+        tv_open = (TextView) findViewById(R.id.tv_open);
+        tv_close = (TextView) findViewById(R.id.tv_close);
         tv_volume = (TextView) findViewById(R.id.tv_volume);
         percen_Symbol = (TextView)findViewById(R.id.percentage_symbol);
 
@@ -553,7 +557,7 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
                     };
                     timer.start();
                 }
-                }
+            }
 
             @Override
             public void onNothingSelected() {
@@ -574,15 +578,40 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         leftYAxis.setEnabled(false);
 
 
-
     }
-    private void loadchartdata(String mystock) {
+    private void loadchartdata(final String mystock) {
 
 
+        DatabaseReference root = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference users = root.child("Symbols");
+        users.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.child(Stock_N).child(String.valueOf(signal_api_call)).exists()) {
+                    // run some code
+                    Toast.makeText(getApplicationContext(), "Good JOB", Toast.LENGTH_LONG).show();
+
+                    FirebaseDataFetch();
+                    String asf ="";
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+                Toast.makeText(getApplicationContext(), "Good", Toast.LENGTH_LONG).show();
+                View_User_Logs(mystock);
+
+            }
+
+        });
         dialog.show();
-        View_User_Logs(mystock);
         tv_stock_name.setText(mystock);
         Stock_N = mystock;
+
+
+
 
     }
     public void View_User_Logs(String stockname) {
@@ -610,7 +639,7 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         {
             url = "https://www.alphavantage.co/query?function="+func+"&symbol="+stockname+"&interval="+URLTime+"&outputsize=full&apikey=WKMM7FGAW7V19SLN";
         }
-        
+
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -691,6 +720,8 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         queue.add(postRequest);
 
     }
+
+
 
     void CalculatePercentage(String jsonString) {
 
@@ -831,7 +862,7 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
 
                 if (date.contains(Previous_Working_day) && signal_api_call == 'I') {
 
-                    mDatabase.child("Symbols").child(Stock_N).child("I").child(key).setValue(high + "," +low +","+open+ ","+close);
+                    mDatabase.child("Symbols").child(Stock_N).child("I").child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
                     entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
                     labels.add(key);
                     entries1.add(new BarEntry(i, Float.valueOf(volume)));
@@ -890,21 +921,21 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
 
 
 
-            BarDataSet set = new BarDataSet(entries1, "");
-            set.setValueTextSize(2);
-            BarData data = new BarData(set);
-            data.setBarWidth(0.9f); // set custom bar width
-            chart.setData(data);
-            chart.setFitBars(true); // make the x-axis fit exactly all bars
-            chart.invalidate(); // refre
-            chart.setDescription(null);
+        BarDataSet set = new BarDataSet(entries1, "");
+        set.setValueTextSize(2);
+        BarData data = new BarData(set);
+        data.setBarWidth(0.9f); // set custom bar width
+        chart.setData(data);
+        chart.setFitBars(true); // make the x-axis fit exactly all bars
+        chart.invalidate(); // refre
+        chart.setDescription(null);
         chart.setDescription(null);    // Hide the description
         chart.getLegend().setEnabled(false);
 
 
-            XAxis xAxis = chart.getXAxis();
-            xAxis.setEnabled(false);
-            xAxis.setDrawAxisLine(false);
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setEnabled(false);
+        xAxis.setDrawAxisLine(false);
 
         YAxis leftYAxis = chart.getAxisLeft();
         leftYAxis.setEnabled(false);
@@ -915,106 +946,259 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
 
     }
 
-        public String getStringofvolume(float value){
-            String str=String.valueOf(value);
-            if (str.contains(","))
-                str = str.replace(",","");
-            if(str.length() == 4){
-                String temp = str.substring(1,2);
-                String main = str.substring(0,1);
-                if(temp.equalsIgnoreCase("0"))
-                    str = main + "K";
-                else
-                    str = main + "." + temp + "K";
+    void FirebaseDataFetch ()
+    {
+
+        String asd ="";
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+
+        database.child("Symbols").child(Stock_N).child("I").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                dialog.dismiss();
+
+                String open = "";
+                String high = "";
+                String low = "";
+                String close = "";
+                String volume = "";
+
+                String []chose_week;
+                int week_date = 0;
+                int month_date = 0;
+
+                int year = 0;
+
+
+                String[] split;
+
+                String [] stockdatasplit;
+
+                int i = 0;
+                colors = null;
+                String date = "";
+                colors = new int[1000];
+                for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
+
+                    String key = noteDataSnapshot.getKey();
+                    String value = String.valueOf(noteDataSnapshot.getValue());
+
+
+
+                    try {
+
+
+
+                        if (S_C_T == 'D' || S_C_T == 'W' || S_C_T == 'M') {
+                            Xaxis_value.add(String.valueOf(key));
+                            chose_week = key.split("-");
+                            month_date = Integer.parseInt(chose_week[1]);
+                            year = Integer.parseInt(chose_week[0]);
+
+
+                        } else if (S_C_T == 'I') {
+                            split = key.split(" ");
+                            date = split[0];
+
+                            chose_week = date.split("-");
+                            week_date = Integer.parseInt(chose_week[2]);
+                            Xaxis_value.add(String.valueOf(split[1]));
+                        }
+
+
+                        stockdatasplit = value.split(",");
+
+                        high = stockdatasplit[0];
+                        low = stockdatasplit[1];
+                        open = stockdatasplit[2];
+                        close = stockdatasplit[3];
+                        volume = stockdatasplit[4];
+                        if (Float.valueOf(close) >= Float.valueOf(open)) {
+                            colors[i] = Color.parseColor("#1D8348");
+                        } else {
+                            colors[i] = Color.parseColor("#E74C3C");
+                        }
+
+                        if (date.contains(Previous_Working_day) && signal_api_call == 'I') {
+
+//                            mDatabase.child("Symbols").child(Stock_N).child("I").child(key).setValue(high + "," + low + "," + open + "," + close);
+                            entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
+                            labels.add(key);
+                            entries1.add(new BarEntry(i, Float.valueOf(volume)));
+                            labelsforvolume.add(Float.valueOf(volume));
+
+                        } else if (signal_api_call == 'W' && 22 - week_date <= 5) {
+                            entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
+                            labels.add(key);
+                            entries1.add(new BarEntry(i, Float.valueOf(volume)));
+                            labelsforvolume.add(Float.valueOf(volume));
+                        } else if (signal_api_call == 'M' && 12 - month_date <= 3 && year == 2017) {
+                            entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
+                            labels.add(key);
+                            entries1.add(new BarEntry(i, Float.valueOf(volume)));
+                            labelsforvolume.add(Float.valueOf(volume));
+                        } else if (signal_api_call == 'Y' && 12 - month_date <= 10 && year == 2017) {
+                            entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
+                            labels.add(key);
+                            entries1.add(new BarEntry(i, Float.valueOf(volume)));
+                            labelsforvolume.add(Float.valueOf(volume));
+                        } else if (signal_api_call == 'Z' && 2017 - year <= 5) {
+                            entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
+                            labels.add(key);
+                            entries1.add(new BarEntry(i, Float.valueOf(volume)));
+                            labelsforvolume.add(Float.valueOf(volume));
+                        } else if (signal_api_call == 'A') {
+                            entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
+                            labels.add(key);
+                            entries1.add(new BarEntry(i, Float.valueOf(volume)));
+                            labelsforvolume.add(Float.valueOf(volume));
+                        }
+
+                        i++;
+                    }
+                    catch (Exception e){
+                    }
+
+                    setupchart();
+
+
+                    BarDataSet set = new BarDataSet(entries1, "");
+                    set.setValueTextSize(2);
+                    BarData data = new BarData(set);
+                    data.setBarWidth(0.9f); // set custom bar width
+                    chart.setData(data);
+                    chart.setFitBars(true); // make the x-axis fit exactly all bars
+                    chart.invalidate(); // refre
+                    chart.setDescription(null);
+                    chart.setDescription(null);    // Hide the description
+                    chart.getLegend().setEnabled(false);
+
+
+                    XAxis xAxis = chart.getXAxis();
+                    xAxis.setEnabled(false);
+                    xAxis.setDrawAxisLine(false);
+
+                    YAxis leftYAxis = chart.getAxisLeft();
+                    leftYAxis.setEnabled(false);
+
+
+                    YAxis rightYAxis = chart.getAxisRight();
+                    rightYAxis.setEnabled(true);
+
+                }
+
             }
-            else  if(str.length() == 5){
-                String temp = str.substring(2,3);
-                String main = str.substring(0,2);
-                if(temp.equalsIgnoreCase("0"))
-                    str = main + "K";
-                else
-                    str = main + "." + temp + "K";
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
-            else  if(str.length() == 6){
-                String temp = str.substring(3,4);
-                String main = str.substring(0,3);
-                if(temp.equalsIgnoreCase("0"))
-                    str = main + "K";
-                else
-                    str = main + "." + temp + "K";
-            }
-            else  if(str.length() == 7){
-                String temp = str.substring(1,2);
-                String main = str.substring(0,1);
-                if(temp.equalsIgnoreCase("0"))
-                    str = main + "M";
-                else
-                    str =main + "." + temp + "M";
-            }
-            else  if(str.length() == 8){
-                String temp = str.substring(2,3);
-                String main = str.substring(0,2);
-                if(temp.equalsIgnoreCase("0"))
-                    str = main + "M";
-                else
-                    str =main + "." + temp + "M";
-            }
-            else  if(str.length() == 9){
-                String temp = str.substring(3,4);
-                String main = str.substring(0,3);
-                if(temp.equalsIgnoreCase("0"))
-                    str = main + "M";
-                else
-                    str = main + "." + temp + "M";
-            }
-            else  if(str.length() == 10){
-                String temp = str.substring(1,2);
-                String main = str.substring(0,1);
-                if(temp.equalsIgnoreCase("0"))
-                    str = main + "B";
-                else
-                    str = main + "." + temp + "B";
-            }else  if(str.length() == 11){
-                String temp = str.substring(2,3);
-                String main = str.substring(0,2);
-                if(temp.equalsIgnoreCase("0"))
-                    str = main + "B";
-                else
-                    str = main + "." + temp + "B";
-            }
-            else  if(str.length() == 12){
-                String temp = str.substring(3,4);
-                String main = str.substring(0,3);
-                if(temp.equalsIgnoreCase("0"))
-                    str = main + "B";
-                else
-                    str = main + "." + temp + "B";
-            }
-            else  if(str.length() == 13){
-                String temp = str.substring(1,2);
-                String main = str.substring(0,1);
-                if(temp.equalsIgnoreCase("0"))
-                    str = main + "T";
-                else
-                    str = main + temp + "T";
-            }else  if(str.length() == 14){
-                String temp = str.substring(2,3);
-                String main = str.substring(0,2);
-                if(temp.equalsIgnoreCase("0"))
-                    str = main + "T";
-                else
-                    str = main + "." + temp + "T";
-            }
-            else  if(str.length() == 15){
-                String temp = str.substring(3,4);
-                String main = str.substring(0,3);
-                if(temp.equalsIgnoreCase("0"))
-                    str = main + "T";
-                else
-                    str = main + "." + temp + "T";
-            }
-            return str;
+
+        });
+
+
+    }
+
+    public String getStringofvolume(float value){
+        String str=String.valueOf(value);
+        if (str.contains(","))
+            str = str.replace(",","");
+        if(str.length() == 4){
+            String temp = str.substring(1,2);
+            String main = str.substring(0,1);
+            if(temp.equalsIgnoreCase("0"))
+                str = main + "K";
+            else
+                str = main + "." + temp + "K";
         }
+        else  if(str.length() == 5){
+            String temp = str.substring(2,3);
+            String main = str.substring(0,2);
+            if(temp.equalsIgnoreCase("0"))
+                str = main + "K";
+            else
+                str = main + "." + temp + "K";
+        }
+        else  if(str.length() == 6){
+            String temp = str.substring(3,4);
+            String main = str.substring(0,3);
+            if(temp.equalsIgnoreCase("0"))
+                str = main + "K";
+            else
+                str = main + "." + temp + "K";
+        }
+        else  if(str.length() == 7){
+            String temp = str.substring(1,2);
+            String main = str.substring(0,1);
+            if(temp.equalsIgnoreCase("0"))
+                str = main + "M";
+            else
+                str =main + "." + temp + "M";
+        }
+        else  if(str.length() == 8){
+            String temp = str.substring(2,3);
+            String main = str.substring(0,2);
+            if(temp.equalsIgnoreCase("0"))
+                str = main + "M";
+            else
+                str =main + "." + temp + "M";
+        }
+        else  if(str.length() == 9){
+            String temp = str.substring(3,4);
+            String main = str.substring(0,3);
+            if(temp.equalsIgnoreCase("0"))
+                str = main + "M";
+            else
+                str = main + "." + temp + "M";
+        }
+        else  if(str.length() == 10){
+            String temp = str.substring(1,2);
+            String main = str.substring(0,1);
+            if(temp.equalsIgnoreCase("0"))
+                str = main + "B";
+            else
+                str = main + "." + temp + "B";
+        }else  if(str.length() == 11){
+            String temp = str.substring(2,3);
+            String main = str.substring(0,2);
+            if(temp.equalsIgnoreCase("0"))
+                str = main + "B";
+            else
+                str = main + "." + temp + "B";
+        }
+        else  if(str.length() == 12){
+            String temp = str.substring(3,4);
+            String main = str.substring(0,3);
+            if(temp.equalsIgnoreCase("0"))
+                str = main + "B";
+            else
+                str = main + "." + temp + "B";
+        }
+        else  if(str.length() == 13){
+            String temp = str.substring(1,2);
+            String main = str.substring(0,1);
+            if(temp.equalsIgnoreCase("0"))
+                str = main + "T";
+            else
+                str = main + temp + "T";
+        }else  if(str.length() == 14){
+            String temp = str.substring(2,3);
+            String main = str.substring(0,2);
+            if(temp.equalsIgnoreCase("0"))
+                str = main + "T";
+            else
+                str = main + "." + temp + "T";
+        }
+        else  if(str.length() == 15){
+            String temp = str.substring(3,4);
+            String main = str.substring(0,3);
+            if(temp.equalsIgnoreCase("0"))
+                str = main + "T";
+            else
+                str = main + "." + temp + "T";
+        }
+        return str;
+    }
 
     @Override
     public void onValueSelected(Entry e, Highlight h) {
@@ -1090,8 +1274,4 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
     }
 
 
-    @Override
-    public void passDataToActivity() {
-        candleStickChart.highlightValues(null);
-    }
 }

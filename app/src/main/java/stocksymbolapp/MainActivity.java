@@ -22,9 +22,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,6 +73,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -137,11 +141,70 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
 
     private DatabaseReference mDatabase;
 
+    TextView volumetext;
+
+    private ArrayAdapter<String> adapter;
+    private List<String> liste;
+    final String NewsList[] = {"Yahoo News", "Market Watch", "Bloomberg", "Seeking Alpha", "Stock Twits", "Twitter"};
+    final String Fundament[] = {"Coming Soon!"};
+
+
+    ListView simpleList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_main);
 
+
+        simpleList = (ListView)findViewById(R.id.simpleListView);
+
+
+
+        final TextView funda = (TextView)findViewById(R.id.funda);
+        final TextView news = (TextView)findViewById(R.id.news);
+
+        funda.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                funda.setBackgroundResource(R.drawable.border_set1);
+                news.setBackgroundResource(R.drawable.border_set);
+                simpleList.setVisibility(View.VISIBLE);
+                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MainActivity.this, R.layout.activity_listview, R.id.textView, Fundament);
+                simpleList.setAdapter(arrayAdapter);
+
+            }
+        });
+        news.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                funda.setBackgroundResource(R.drawable.border_set);
+                news.setBackgroundResource(R.drawable.border_set1);
+                simpleList.setVisibility(View.VISIBLE);
+                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MainActivity.this, R.layout.activity_listview, R.id.textView, NewsList);
+                simpleList.setAdapter(arrayAdapter);
+
+                simpleList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                        String text = NewsList[position];
+                        Intent intent = new Intent(getBaseContext(), Webpage.class);
+                        intent.putExtra("news", text);
+                        startActivity(intent);
+
+
+                    }
+                });
+            }
+        });
+
+
+
+
+
+        volumetext = (TextView)findViewById(R.id.verticaltextview);
 // ...
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
@@ -589,10 +652,21 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.child(Stock_N).child(String.valueOf(signal_api_call)).exists()) {
                     // run some code
-                    Toast.makeText(getApplicationContext(), "Good JOB", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getApplicationContext(), "Good JOB", Toast.LENGTH_LONG).show();
+                    labels.clear();
+                    Xaxis_value.clear();
+                    entries.clear();
+                    entries1.clear();
+                    labelsforvolume.clear();
 
                     FirebaseDataFetch();
                     String asf ="";
+                }
+
+                else if (!snapshot.child(Stock_N).child(String.valueOf(signal_api_call)).exists()) {
+                    // run some code
+                    View_User_Logs(mystock);
+
                 }
 
             }
@@ -600,14 +674,15 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
-                Toast.makeText(getApplicationContext(), "Good", Toast.LENGTH_LONG).show();
-                View_User_Logs(mystock);
+//                Toast.makeText(getApplicationContext(), "Good", Toast.LENGTH_LONG).show();
+
 
             }
 
         });
         dialog.show();
         tv_stock_name.setText(mystock);
+
         Stock_N = mystock;
 
 
@@ -853,6 +928,8 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
                 open = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("1. open"));
                 close = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("4. close"));
                 volume = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("5. volume"));
+
+
                 if (Float.valueOf(close) >= Float.valueOf(open)) {
                     colors[i] = Color.parseColor("#1D8348");
                 }
@@ -862,7 +939,7 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
 
                 if (date.contains(Previous_Working_day) && signal_api_call == 'I') {
 
-                    mDatabase.child("Symbols").child(Stock_N).child("I").child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
+                    mDatabase.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
                     entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
                     labels.add(key);
                     entries1.add(new BarEntry(i, Float.valueOf(volume)));
@@ -871,6 +948,8 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
 
                 else if (signal_api_call=='W' && 22 - week_date <=5)
                 {
+
+                    mDatabase.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
                     entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
                     labels.add(key);
                     entries1.add(new BarEntry(i, Float.valueOf(volume)));
@@ -879,6 +958,7 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
 
                 else if (signal_api_call=='M' && 12 - month_date <=3  && year ==2017)
                 {
+                    mDatabase.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
                     entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
                     labels.add(key);
                     entries1.add(new BarEntry(i, Float.valueOf(volume)));
@@ -887,6 +967,7 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
 
                 else if (signal_api_call=='Y' && 12 - month_date <=10 && year ==2017)
                 {
+                    mDatabase.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
                     entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
                     labels.add(key);
                     entries1.add(new BarEntry(i, Float.valueOf(volume)));
@@ -896,6 +977,7 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
 
                 else if (signal_api_call=='Z' && 2017 - year <=5)
                 {
+                    mDatabase.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
                     entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
                     labels.add(key);
                     entries1.add(new BarEntry(i, Float.valueOf(volume)));
@@ -904,10 +986,22 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
 
                 else if (signal_api_call=='A')
                 {
+                    mDatabase.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
                     entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
                     labels.add(key);
                     entries1.add(new BarEntry(i, Float.valueOf(volume)));
                     labelsforvolume.add(Float.valueOf(volume));
+                }
+
+                float a = Collections.max(labelsforvolume);
+
+                if (a >1000)
+                {
+                    volumetext.setText("ThOUSAND");
+                }
+                else if (a >100000)
+                {
+                    volumetext.setText("MILLION");
                 }
 
                 i++;
@@ -940,9 +1034,15 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         YAxis leftYAxis = chart.getAxisLeft();
         leftYAxis.setEnabled(false);
 
-
         YAxis rightYAxis = chart.getAxisRight();
         rightYAxis.setEnabled(true);
+//                    rightYAxis.setMaxWidth(15);
+
+            rightYAxis.setLabelCount(2, true);
+//            rightYAxis.setSpaceMax(3);
+            rightYAxis.setAxisLineWidth(3);
+            rightYAxis.setAxisMaximum(3);
+            rightYAxis.setMaxWidth(3);
 
     }
 
@@ -952,7 +1052,7 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         String asd ="";
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
-        database.child("Symbols").child(Stock_N).child("I").addValueEventListener(new ValueEventListener() {
+        database.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 dialog.dismiss();
@@ -1054,6 +1154,16 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
                             labelsforvolume.add(Float.valueOf(volume));
                         }
 
+                        float a = Collections.max(labelsforvolume);
+
+                        if (a >1000)
+                        {
+                            volumetext.setText("ThOUSAND");
+                        }
+                        else if (a >100000)
+                        {
+                            volumetext.setText("MILLION");
+                        }
                         i++;
                     }
                     catch (Exception e){
@@ -1084,6 +1194,16 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
 
                     YAxis rightYAxis = chart.getAxisRight();
                     rightYAxis.setEnabled(true);
+//                    rightYAxis.setMaxWidth(15);
+
+
+
+                        rightYAxis.setLabelCount(2, true);
+//                        rightYAxis.setSpaceMax(3);
+//                        rightYAxis.setAxisLineWidth(3);
+                        rightYAxis.setAxisMaximum(3);
+                        rightYAxis.setMaxWidth(3);
+
 
                 }
 

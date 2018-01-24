@@ -321,17 +321,48 @@
             android:textStyle="normal" />
     </LinearLayout>
 
+
+
 </RelativeLayout>
-                <com.github.mikephil.charting.charts.BarChart
-                    android:id="@+id/chart1"
+
+
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/chart1"
+                android:layout_width="match_parent"
+                android:layout_height="100dp" />
+
+                <TextView
+                    android:id="@+id/verticaltextview"
                     android:layout_width="match_parent"
-                    android:layout_height="100dp" />
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    android:textColor="#607d8b"
+                    android:layout_gravity="center" />
+
+
+
+
+            </LinearLayout>
+
+
 
 
 
 
 
         <Button
+            android:layout_marginTop="10dp"
             android:id="@+id/watch_list"
             android:layout_width="200dp"
             android:layout_height="40dp"
@@ -339,9 +370,53 @@
             android:textColor="#607d8b"
             android:textAllCaps="false"
             android:layout_gravity="center"
-            android:background="@drawable/my_button_bg"
-            />
+            android:background="@drawable/my_button_bg" />
+
+            <LinearLayout
+
+                android:layout_margin="5dp"
+                android:background="@drawable/border_set"
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+
+
+                <TextView
+                    android:id="@+id/funda"
+                    android:padding="20dp"
+                    android:layout_weight="1"
+                    android:text="Fundamentals"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/news"
+                    android:padding="20dp"
+                    android:textSize="20sp"
+                    android:layout_weight="1"
+                    android:text="News"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+
+            <ListView
+
+                android:visibility="gone"
+                android:id="@+id/simpleListView"
+                android:layout_width="fill_parent"
+                android:layout_height="250dp"
+                android:divider="@null"
+                android:dividerHeight="0dp"
+                android:layout_marginBottom="30dp" />
+
+
+
+
     </LinearLayout>
+
 
         </ScrollView>
 

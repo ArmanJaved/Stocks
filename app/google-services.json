@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "650738192833-t6c0bkdk40hjtet19mu9ur3okpave0ej.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.stocksymbolapp",
+            "certificate_hash": "cf57a37491007f47a0f8ca6b65850b4c79e7112b"
+          }
+        },
+        {
           "client_id": "650738192833-d7t67cj1s7rhsu1kklao1h5dr410pupu.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

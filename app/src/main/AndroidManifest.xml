@@ -19,9 +19,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="stocksymbolapp.MainActivity" ></activity>
         <activity android:name="stocksymbolapp.WatchlistActivity" ></activity>
-        <activity android:name="stocksymbolapp.MainActivity" android:theme="@style/AppTheme.NoActionBar"
-            android:configChanges="orientation" ></activity>
         <activity android:name="stocksymbolapp.ClicktoSymbol"  android:configChanges="orientation|screenSize"></activity>
         <activity android:name="stocksymbolapp.GainersLosersList" ></activity>
         <activity android:name="stocksymbolapp.TopGainers.TopGainersActivity" ></activity>

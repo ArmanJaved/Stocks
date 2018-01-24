@@ -69,8 +69,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
+import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -116,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
     TextView percen_Symbol;
     private PlaceHolderView mDrawerView;
     private DrawerLayout mDrawer;
-    private android.support.v7.widget.Toolbar mToolbar;
+    private Toolbar mToolbar;
     private PlaceHolderView mGalleryView;
 
     BarChart chart;
@@ -192,6 +195,7 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
                         String text = NewsList[position];
                         Intent intent = new Intent(getBaseContext(), Webpage.class);
                         intent.putExtra("news", text);
+                        intent.putExtra("symbol", Stock_N);
                         startActivity(intent);
 
 
@@ -365,13 +369,13 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         final Button watch_L = (Button)findViewById(R.id.watch_list);
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
 
         mDrawer = (DrawerLayout)findViewById(R.id.drawerLayout);
         mDrawerView = (PlaceHolderView)findViewById(R.id.drawerView);
-        mToolbar = (android.support.v7.widget.Toolbar)findViewById(R.id.toolbar);
+        mToolbar = (Toolbar)findViewById(R.id.toolbar);
         mGalleryView = (PlaceHolderView)findViewById(R.id.galleryView);
         setupDrawer();
 
@@ -937,7 +941,7 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
                     colors[i] = Color.parseColor("#E74C3C");
                 }
 
-                if (date.contains(Previous_Working_day) && signal_api_call == 'I') {
+                if (date.contains("2018-01-23") && signal_api_call == 'I') {
 
                     mDatabase.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
                     entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
@@ -1090,10 +1094,17 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
 
 
                         if (S_C_T == 'D' || S_C_T == 'W' || S_C_T == 'M') {
-                            Xaxis_value.add(String.valueOf(key));
+
+
+
+
                             chose_week = key.split("-");
                             month_date = Integer.parseInt(chose_week[1]);
                             year = Integer.parseInt(chose_week[0]);
+
+                            String month_ns= getMonthForInt(month_date);
+                            String cutString = month_ns.substring(0, 3);
+                            Xaxis_value.add(String.valueOf(cutString));
 
 
                         } else if (S_C_T == 'I') {
@@ -1119,7 +1130,7 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
                             colors[i] = Color.parseColor("#E74C3C");
                         }
 
-                        if (date.contains(Previous_Working_day) && signal_api_call == 'I') {
+                        if (date.contains("2018-01-23") && signal_api_call == 'I') {
 
 //                            mDatabase.child("Symbols").child(Stock_N).child("I").child(key).setValue(high + "," + low + "," + open + "," + close);
                             entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
@@ -1217,6 +1228,17 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         });
 
 
+    }
+
+
+    String getMonthForInt(int num) {
+        String month = "";
+        DateFormatSymbols dfs = new DateFormatSymbols();
+        String[] months = dfs.getMonths();
+        if (num >= 0 && num <= 11 ) {
+            month = months[num];
+        }
+        return month;
     }
 
     public String getStringofvolume(float value){

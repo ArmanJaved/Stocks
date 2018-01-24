@@ -50,9 +50,7 @@ public class Splashscreen extends FragmentActivity {
                         waited += 100;
                     }
 //                    Intent intent = new Intent(Splashscreen.this, MainActivity.class);
-                    Intent intent = new Intent(Splashscreen.this, MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(intent);
+                    startActivity(new Intent(Splashscreen.this, MainActivity.class));
                     Splashscreen.this.finish();
                 } catch (InterruptedException e) {
                     // do nothing

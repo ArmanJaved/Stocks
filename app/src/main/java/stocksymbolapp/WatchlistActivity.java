@@ -80,8 +80,6 @@ public class WatchlistActivity extends AppCompatActivity {
         data_artist();
 
 
-
-
     }
 
     @Override

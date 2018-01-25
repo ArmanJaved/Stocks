@@ -6,14 +6,14 @@ import android.os.Bundle;
  * Created by BrainPlow on 8/25/2017.
  */
 
-public class Resaurants {
+public class Watch {
 
     public String restId;
     public String restname;
     public String restamount;
     public String date;
 
-    public Resaurants()
+    public Watch()
     {
 
     }
@@ -37,7 +37,7 @@ public class Resaurants {
 
 
 
-    public Resaurants(String restId, String restname, String restamount, String date) {
+    public Watch(String restId, String restname, String restamount, String date) {
         this.date = date;
         this.restId = restId;
         this.restname = restname;

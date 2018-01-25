@@ -18,13 +18,13 @@ import java.util.List;
  * Created by BrainPlow on 8/25/2017.
  */
 
-public class RestaurantsList extends ArrayAdapter<Resaurants> {
+public class WatchList extends ArrayAdapter<Watch> {
 
     private Activity context;
-    private List<Resaurants> resaurantsList;
+    private List<Watch> resaurantsList;
     public static final String TotalAmount = "totalamount";
 
-    public RestaurantsList(Activity context, List<Resaurants> resaurantsList)
+    public WatchList(Activity context, List<Watch> resaurantsList)
     {
         super(context, R.layout.listview_rest, resaurantsList);
 
@@ -44,7 +44,7 @@ public class RestaurantsList extends ArrayAdapter<Resaurants> {
         TextView date = (TextView)listviewitem.findViewById(R.id.Textartistname1);
 
 
-        Resaurants resaurants = resaurantsList.get(position);
+        Watch resaurants = resaurantsList.get(position);
         float check  = Float.parseFloat(resaurants.getRestamount());
         if (check > 0)
         {

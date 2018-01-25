@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -35,7 +34,7 @@ public class WatchlistActivity extends AppCompatActivity {
     DatabaseReference artistreference;
     FirebaseAuth auth;
     ListView listViewartists;
-    List<Resaurants> resaurantsList;
+    List<Watch> resaurantsList;
 
 
     public static final String CheckLogin = "ChkLogin";
@@ -115,14 +114,14 @@ public class WatchlistActivity extends AppCompatActivity {
 
                         resaurantsList.size();
 //
-                        RestaurantsList adaptor = null;
+                        WatchList adaptor = null;
                         for (DataSnapshot artistsnapshot: dataSnapshot.getChildren())
                         {
 
-                            Resaurants resaurants = artistsnapshot.getValue(Resaurants.class);
+                            Watch resaurants = artistsnapshot.getValue(Watch.class);
                             resaurantsList.add(resaurants);
 
-                             adaptor = new RestaurantsList(WatchlistActivity.this, resaurantsList);
+                             adaptor = new WatchList(WatchlistActivity.this, resaurantsList);
                             listViewartists.setAdapter(adaptor);
                         }
 

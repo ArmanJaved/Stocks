@@ -37,7 +37,7 @@ public class AddData {
             String dateString = sdf.format(date);
 
             String id = artistreference.push().getKey();
-            Resaurants resaurants = new Resaurants(id, name, strintg_genres,dateString);
+            Watch resaurants = new Watch(id, name, strintg_genres,dateString);
             artistreference.child(id).setValue(resaurants);
             Toast.makeText(context, "Stock symbol is added to Watchlist", Toast.LENGTH_LONG).show();
 

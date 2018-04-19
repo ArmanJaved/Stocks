@@ -20,8 +20,6 @@ import com.stocksymbolapp.R;
 import java.util.ArrayList;
 
 import dmax.dialog.SpotsDialog;
-import stocksymbolapp.Top.Losers.LosersCustomAdapter;
-import stocksymbolapp.Top.Losers.LosersDataModel;
 
 public class Help extends AppCompatActivity {
 
@@ -34,8 +32,7 @@ public class Help extends AppCompatActivity {
         setContentView(R.layout.help);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
+        getSupportActionBar().setTitle("Help");
 
 
 

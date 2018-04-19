@@ -7,6 +7,7 @@ import android.view.MenuItem;
 
 import com.stocksymbolapp.R;
 
+
 public class TermsPrivacy extends AppCompatActivity {
 
 
@@ -18,6 +19,7 @@ public class TermsPrivacy extends AppCompatActivity {
         setContentView(R.layout.terms);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Terms/ Privacy");
 
 
 

@@ -8,4 +8,14 @@
 
     <color name="colorchange">#78201e</color>
     <color name="burgericon">#fff</color>
+    <color name="switchclr">#2196f3</color>
+    <color name="white">#ffffff</color>
+
+
+    <color name="disable_forground_grey">#42121111</color>
+    <color name="disable_thumb_grey">#1c000000</color>
+    <color name="enable_thumb_green">#2196f3</color>
+
+    <color name="text">#000000</color>
+
 </resources>

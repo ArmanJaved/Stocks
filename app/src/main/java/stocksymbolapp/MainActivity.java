@@ -1,13 +1,17 @@
 package stocksymbolapp;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,9 +20,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -32,15 +37,21 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.CandleStickChart;
+import com.github.mikephil.charting.charts.Chart;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -50,40 +61,58 @@ import com.github.mikephil.charting.data.CandleData;
 import com.github.mikephil.charting.data.CandleDataSet;
 import com.github.mikephil.charting.data.CandleEntry;
 import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.listener.ChartTouchListener;
+import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 import com.mindorks.placeholderview.PlaceHolderView;
 import com.stocksymbolapp.R;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-import dmax.dialog.SpotsDialog;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
-public class MainActivity extends AppCompatActivity implements OnChartValueSelectedListener {
+
+public class MainActivity extends AppCompatActivity implements OnChartGestureListener,
+        OnChartValueSelectedListener  {
     ArrayList<String> labels = new ArrayList<String>();
     ArrayList<Float> labelsforvolume = new ArrayList<Float>();
     ArrayList<CandleEntry> entries = new ArrayList<>();
@@ -98,19 +127,18 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
     List<BarEntry> entries1 = new ArrayList<>();
     CandleDataSet dataset;
 
+    int stocksymindex;
 
     public String URLTime;
     public String TimeSeries;
     public String func;
 
-    SpotsDialog dialog;
+    String [] stockdatasplit;
 
     TextView start_D, end_D;
-    TextView daily, weekly, monthly;
-
-    LinearLayout intra_d;
-    TextView intra_T;
+    public LineChart mChart;
     String Stock_N;
+    DataPoint[] dataPoints;
 
     TextView d1,w1,m3,y1,y5, all ;
 
@@ -130,7 +158,6 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
     Character signal_api_call;
     static CountDownTimer timer;
 
-    String Current_Date;
 
     String percentageSymbol;
     TextView  tv_high ;
@@ -144,15 +171,39 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
 
     private DatabaseReference mDatabase;
 
-    TextView volumetext;
+    String [] horizolab ;
 
     private ArrayAdapter<String> adapter;
+
+    Button watch_L;
     private List<String> liste;
     final String NewsList[] = {"Yahoo News", "Market Watch", "Bloomberg", "Seeking Alpha", "Stock Twits", "Twitter"};
-    final String Fundament[] = {"Coming Soon!"};
+    final String Fundamentname[] = {"Market Cap", "Revenue (Year)", "Profit Margin", "P/E", "Basic EPS", "Cash Div/Share", "Short Interest", "Basic Shares OS"};
 
+    public static final String CHART = "chart";
 
     ListView simpleList;
+    private TextView mTextView;
+    private static final String KEY_TEXT_VALUE = "textValue";
+
+    DatabaseReference artistreference;
+
+    EditText firstName, lastName, title, department;
+
+    private static final String KEY_FIRSTNAME= "firstname_key";
+    private static final String KEY_LASTNAME = "lastname_key";
+    private static final String KEY_TITLE = "title_key";
+
+
+
+    private String mFirstName, mLastName, mTitle;
+    TextView first, last, mTit;
+
+
+
+    ListView listViewfun;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,31 +211,76 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         setContentView(R.layout.content_main);
 
 
+        listViewfun = (ListView)findViewById(R.id.list);
+
+
+
+        firstName = (EditText) findViewById(R.id.edit_employee_firstname);
+        lastName = (EditText) findViewById(R.id.edit_employee_lastname);
+        title = (EditText) findViewById(R.id.edit_employee_title);
+
+        tv_stock_name = (TextView)findViewById(R.id.tv_stock_name);
+        first = (TextView) findViewById(R.id.empFirst);
+        last = (TextView) findViewById(R.id.empLast);
+        mTit = (TextView) findViewById(R.id.empTitle);
+
+
+        if (savedInstanceState != null) {
+            String savedFirstName = savedInstanceState.getString(KEY_FIRSTNAME);
+            tv_stock_name.setText(savedFirstName);
+
+            String savedLastName = savedInstanceState.getString(KEY_LASTNAME);
+            last.setText(savedLastName);
+
+            String savedTitle = savedInstanceState.getString(KEY_TITLE);
+            mTit.setText(savedTitle);
+
+        }else{
+//            Toast.makeText(this, "New entry", Toast.LENGTH_SHORT).show();
+        }
+
+
+//        String sa = getMonth(8);
+
+//        AddData obj = new AddData(getApplicationContext());
+//        obj.addartist (String.valueOf("G"), "1.0");
+
+        handleSSLHandshake();
+
+//        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        Previous_Working_day = sdf.format(lastDateOfPreviousWeek);
+        getSupportActionBar().hide();
+
+        startService(new Intent(this, LinkService.class));
         simpleList = (ListView)findViewById(R.id.simpleListView);
-
-
-
         final TextView funda = (TextView)findViewById(R.id.funda);
         final TextView news = (TextView)findViewById(R.id.news);
 
-        funda.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
                 funda.setBackgroundResource(R.drawable.border_set1);
                 news.setBackgroundResource(R.drawable.border_set);
-                simpleList.setVisibility(View.VISIBLE);
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MainActivity.this, R.layout.activity_listview, R.id.textView, Fundament);
-                simpleList.setAdapter(arrayAdapter);
+                simpleList.setVisibility(View.GONE);
+                listViewfun.setVisibility(View.VISIBLE);
 
-            }
-        });
+                funda.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        funda.setBackgroundResource(R.drawable.border_set1);
+                        news.setBackgroundResource(R.drawable.border_set);
+                        simpleList.setVisibility(View.GONE);
+                        listViewfun.setVisibility(View.VISIBLE);
+
+                    }
+                });
+
         news.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 funda.setBackgroundResource(R.drawable.border_set);
                 news.setBackgroundResource(R.drawable.border_set1);
                 simpleList.setVisibility(View.VISIBLE);
+                listViewfun.setVisibility(View.GONE);
                 ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MainActivity.this, R.layout.activity_listview, R.id.textView, NewsList);
                 simpleList.setAdapter(arrayAdapter);
 
@@ -197,21 +293,13 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
                         intent.putExtra("news", text);
                         intent.putExtra("symbol", Stock_N);
                         startActivity(intent);
-
-
                     }
                 });
             }
         });
 
 
-
-
-
-        volumetext = (TextView)findViewById(R.id.verticaltextview);
-// ...
         mDatabase = FirebaseDatabase.getInstance().getReference();
-
 
         llt_markerview = (LinearLayout) findViewById(R.id.llt_markerview);
         tv_high = (TextView) findViewById(R.id.tv_high);
@@ -222,33 +310,11 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         tv_volume = (TextView) findViewById(R.id.tv_volume);
         percen_Symbol = (TextView)findViewById(R.id.percentage_symbol);
 
-        Date today = new Date();
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(today);
-
-        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-
-        if (dayOfWeek == Calendar.MONDAY) {
-            calendar.add(Calendar.DATE, -3);
-        } else if (dayOfWeek == Calendar.SUNDAY) {
-            calendar.add(Calendar.DATE, -2);
-        } else {
-            calendar.add(Calendar.DATE, -1);
-        }
-
-        Date previousBusinessDay = calendar.getTime();
-
-        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        System.out.println("Today                : " + sdf.format(today));
-        System.out.println("Previous business day: " + sdf.format(previousBusinessDay));
-
-        Previous_Working_day = sdf.format(previousBusinessDay);
-
 
         S_C_T ='I';
 
-        signal_api_call='I';
+        signal_api_call='M';
+
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         start_D = (TextView)findViewById(R.id.start);
@@ -260,7 +326,9 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         y5= (TextView)findViewById(R.id.y5);
         all= (TextView)findViewById(R.id.all);
 
-        d1.setBackgroundResource(R.drawable.border_set1);
+        m3.setBackgroundResource(R.drawable.border_set1);
+
+
 
         d1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -366,7 +434,7 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
                 y5.setBackgroundResource(R.drawable.border_set);
             }
         });
-        final Button watch_L = (Button)findViewById(R.id.watch_list);
+        watch_L = (Button)findViewById(R.id.watch_list);
 
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -380,11 +448,65 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         setupDrawer();
 
 
-        dialog = new SpotsDialog(this);
-        dialog.show();
         candleStickChart = (CandleStickChart) findViewById(R.id.chart);
-        tv_stock_name = (TextView)findViewById(R.id.tv_stock_name);
+        candleStickChart.setNoDataText("loading...");
+
         candleStickChart.setOnChartValueSelectedListener(this);
+
+
+        mChart = (LineChart) findViewById(R.id.asdlinechart);
+
+        // Get reference of widgets from XML layout
+        final Spinner spinner = (Spinner) findViewById(R.id.line);
+
+        // Initializing a String Array
+        String[] plants = new String[]{
+                "Candle Chart",
+                "Line Chart",
+        };
+
+        final List<String> plantsList = new ArrayList<>(Arrays.asList(plants));
+
+        // Initializing an ArrayAdapter
+        final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+                this,R.layout.spinner_item,plantsList){
+            @Override
+            public boolean isEnabled(int position){
+
+                return true;
+
+            }
+            @Override
+            public View getDropDownView(int position, View convertView,
+                                        ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+//                if(position == ){
+//                    // Set the hint text color gray
+//                    tv.setTextColor(Color.GRAY);
+//
+//                }
+//                else {
+//                    tv.setTextColor(Color.BLACK);
+//                }
+                return view;
+            }
+        };
+
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String chartstatus = preferences.getString("chartstatus", "");
+
+        if (chartstatus.equals("c")) {
+
+            candleStickChart.setVisibility(View.VISIBLE);
+            mChart.setVisibility(View.INVISIBLE);
+        }
+        else{
+
+            mChart.setVisibility(View.VISIBLE);
+            candleStickChart.setVisibility(View.INVISIBLE);
+        }
 
 
 
@@ -392,8 +514,8 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         rlt_stock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                d = new Dialog(MainActivity.this);
 
+                d = new Dialog(MainActivity.this);
                 watch_L.setText("Add to Watchlist");
                 watch_L.setEnabled(true);
                 watch_L.setTextColor(Color.parseColor("#000000"));
@@ -413,7 +535,8 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
                             stocklist.clear();
                             loadstockdialog(charSequence.toString().trim(), true);
 
-                        }else{
+                        }
+                        else{
                             stocklist.clear();
                             loadstockdialog("", false);
                         }
@@ -444,11 +567,7 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
             public void onClick(View v) {
 
 
-                watch_L.setText("Added");
-                watch_L.setEnabled(false);
-                watch_L.setTextColor(Color.parseColor("#000000"));
-                AddData obj = new AddData(getApplicationContext());
-                obj.addartist (String.valueOf(Stock_N), percentageSymbol);
+                data_symbolwatchlist();
             }
         });
         URLTime="1min";
@@ -462,8 +581,8 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
             GetPercentage(extraStr);
         } catch (NullPointerException e ) {
 //            extraStr = "something_else";
-            loadchartdata("AB");
-            GetPercentage("AB");
+            loadchartdata("A");
+            GetPercentage("A");
         }
 
 //        dialog.dismiss();
@@ -481,9 +600,171 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         });
 
         chart = (BarChart) findViewById(R.id.chart1);
+        chart.setNoDataText("loading...");
+
+
+        setcompanydetails();
+
+        Foundamentals();
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+
+        savedInstanceState.putString(KEY_FIRSTNAME, tv_stock_name.getText().toString());
+        savedInstanceState.putString(KEY_LASTNAME, last.getText().toString());
+        savedInstanceState.putString(KEY_TITLE, mTit.getText().toString());
+
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public void saveView(View view){
+        first.setText(firstName.getText().toString().trim());
+        last.setText(lastName.getText().toString().trim());
+        mTit.setText(title.getText().toString().trim());
+    }
+
+
+    public void setcompanydetails ()
+    {
+        TextView symbnam = (TextView)findViewById(R.id.symbolname);
+        TextView exname = (TextView)findViewById(R.id.exchangenam);
+        final TextView comnam = (TextView)findViewById(R.id.compnam);
+        TextView sec = (TextView)findViewById(R.id.sector);
+        TextView indus = (TextView)findViewById(R.id.industry);
+        TextView country = (TextView)findViewById(R.id.country);
+
+        InputStreamReader is = null;
+        try {
+            is = new InputStreamReader(getAssets()
+                    .open("companylist.csv"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        BufferedReader reader = new BufferedReader(is);
+        try {
+            reader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String line;
+        String [] Data = new String[0];
+
+
+        try {
+            while ((line = reader.readLine()) != null) {
+
+
+                Data = line.split(",");
+                if (Stock_N.equals(Data[0]))
+                {
+                    break;
+                }
+
+            }
+
+            symbnam.setText(Data[0]);
+            exname.setText("["+Data[7]+"]");
+
+            String compnam= Data[1];
+
+            compnam =compnam.substring(1);
+            country.setText(Data[4]);
+            sec.setText(Data[5]);
+            indus.setText(Data[6]);
 
 
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+        String url = "https://api.intrinio.com/companies?identifier="+Stock_N;
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest postRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+
+
+
+
+                        try {
+                            String contacts = null;
+                            JSONObject object = null;
+                            object = new JSONObject(response);
+                            contacts = object.getString("name");
+                            comnam.setText(contacts);
+//                            Toast.makeText(getApplicationContext(), contacts, Toast.LENGTH_LONG).show();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        Log.d("ERROR","error => "+error.toString());
+//                        Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
+
+                        comnam.setText("N/A");
+
+                        String aasd= error.toString();
+                    }
+                }
+        ) {
+
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<String, String>();
+                String creds = String.format("%s:%s","788e3c656c0e4e0b579cad93b9efd853","c1c2a2c03556ee69689e4ac572892d53");
+                String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.NO_WRAP);
+                params.put("Authorization", auth);
+                return params;
+            }
+
+        };
+
+        postRequest.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 50000;
+            }
+
+            @Override
+            public int getCurrentRetryCount() {
+                return 50000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+
+            }
+        });
+        queue.add(postRequest);
+    }
+
+
+    public void data_symbolwatchlist()
+    {
+
+
+        AddData obj = new AddData(getApplicationContext());
+        obj.addartist (String.valueOf(Stock_N), percentageSymbol);
+        String asd = "";
+        watch_L.setEnabled(false);
+        watch_L.setTextColor(Color.parseColor("#000000"));
     }
     @Override
     public void onConfigurationChanged(Configuration newConfig)
@@ -522,6 +803,11 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
 
         mDrawer.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
+    }
+
+
+    public String getMonth(int month) {
+        return new DateFormatSymbols().getMonths()[month-1].substring(0,3) ;
     }
 
 
@@ -572,121 +858,12 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         }
     }
 
-    private void setupchart(){
-        dataset = new CandleDataSet(entries,"Entries");
-        dataset.setDecreasingColor(Color.parseColor("#E74C3C"));
-        dataset.setDecreasingPaintStyle(Paint.Style.FILL_AND_STROKE);
-        dataset.setIncreasingColor(Color.parseColor("#1D8348"));
-        dataset.setIncreasingPaintStyle(Paint.Style.FILL_AND_STROKE);
-        dataset.setDrawValues(false);
-        dataset.setNeutralColor(Color.parseColor("#1D8348"));
-        dataset.setShadowColorSameAsCandle(true);
-
-        CandleData data = new CandleData(dataset);
-        dataset.setColors(colors);
-        candleStickChart.setData(data);
-        candleStickChart.setDescription(null);
-        candleStickChart.getLegend().setEnabled(false);
-        dataset.notifyDataSetChanged();
-        candleStickChart.notifyDataSetChanged();
-
-        candleStickChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
-            @Override
-            public void onValueSelected(Entry e, Highlight h) {
-                if (e instanceof CandleEntry) {
-                    CandleEntry ce = (CandleEntry) e;
-
-
-                    String asdf= String.valueOf( ce.getX());
-                    tv_high.setText("High: " + ce.getHigh());
-                    tv_low.setText("Low: " + ce.getLow());
-                    tv_open.setText("Open: " + ce.getOpen());
-                    tv_close.setText("Close: " + ce.getClose());
-                    tv_volume.setText("Volume: " +  getStringofvolume(labelsforvolume.get(candleStickChart.getCandleData().getDataSetForEntry(e).getEntryIndex(ce))));
-                    x_time.setText("Time: " +  Xaxis_value.get(candleStickChart.getCandleData().getDataSetForEntry(e).getEntryIndex(ce)));
-
-                    llt_markerview.setVisibility(View.VISIBLE);
-
-                    if (timer != null)
-                        timer.cancel();
-                    timer = new CountDownTimer(5000, 1000) {
-                        @Override
-                        public void onTick(long l) {
-
-                        }
-
-                        @Override
-                        public void onFinish() {
-
-                            llt_markerview.setVisibility(View.GONE);
-
-                        }
-                    };
-                    timer.start();
-                }
-            }
-
-            @Override
-            public void onNothingSelected() {
-
-            }
-        });
-        candleStickChart.invalidate();
-
-
-        XAxis xAxis1 = candleStickChart.getXAxis();
-        xAxis1.setValueFormatter(new IndexAxisValueFormatter(Xaxis_value));
-        xAxis1.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis1.setTextSize(5);
-        dialog.dismiss();
-
-
-        YAxis leftYAxis = candleStickChart.getAxisLeft();
-        leftYAxis.setEnabled(false);
-
-
-    }
     private void loadchartdata(final String mystock) {
 
 
-        DatabaseReference root = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference users = root.child("Symbols");
-        users.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                if (snapshot.child(Stock_N).child(String.valueOf(signal_api_call)).exists()) {
-                    // run some code
-//                    Toast.makeText(getApplicationContext(), "Good JOB", Toast.LENGTH_LONG).show();
-                    labels.clear();
-                    Xaxis_value.clear();
-                    entries.clear();
-                    entries1.clear();
-                    labelsforvolume.clear();
 
-                    FirebaseDataFetch();
-                    String asf ="";
-                }
-
-                else if (!snapshot.child(Stock_N).child(String.valueOf(signal_api_call)).exists()) {
-                    // run some code
-                    View_User_Logs(mystock);
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-//                Toast.makeText(getApplicationContext(), "Good", Toast.LENGTH_LONG).show();
-
-
-            }
-
-        });
-        dialog.show();
         tv_stock_name.setText(mystock);
-
+        View_User_Logs(mystock);
         Stock_N = mystock;
 
 
@@ -696,28 +873,53 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
     public void View_User_Logs(String stockname) {
 
 
+        candleStickChart.setNoDataText("loading");
+
         String url = null;
 
-        if ( S_C_T =='D')
+        if (signal_api_call=='I')
+        {
+            url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+stockname+"&interval=1min&apikey=U3BSFX821P0F5N5W";
+            volleycallmethodapi(url);
+        }
+        else if (signal_api_call=='W')
+        {
+            url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+stockname+"&interval=15min&apikey=U3BSFX821P0F5N5W";
+            volleycallmethodapi(url);
+        }
+
+        if (signal_api_call=='M')
+        {
+            url = "https://api.iextrading.com/1.0/stock/"+stockname+"/chart/3m";
+            volleycallmethodapi(url);
+
+        }
+        else if (signal_api_call=='Y')
+        {
+            url ="https://api.iextrading.com/1.0/stock/"+stockname+"/chart/1y";
+            volleycallmethodapi(url);
+        }
+
+        else if (signal_api_call=='Z')
         {
 
-            TimeSeries = "Time Series (Daily)";
-            url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="+stockname+"&outputsize=full&apikey=WKMM7FGAW7V19SLN";
+            url ="https://api.intrinio.com/prices?identifier="+stockname+"&frequency=weekly";
+            WeeklyYearlyAPi(url);
+
         }
-        else if ( S_C_T =='W')
+
+        else if (signal_api_call=='A')
         {
-            TimeSeries = "Weekly Time Series";
-            url = "https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol="+stockname+"&apikey=WKMM7FGAW7V19SLN";
+            url ="https://api.intrinio.com/prices?identifier="+stockname+"&frequency=monthly";
+            WeeklyYearlyAPi(url);
         }
-        else if ( S_C_T =='M')
-        {
-            TimeSeries = "Monthly Time Series";
-            url = "https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol="+stockname+"&apikey=WKMM7FGAW7V19SLN";
-        }
-        else if (S_C_T =='I')
-        {
-            url = "https://www.alphavantage.co/query?function="+func+"&symbol="+stockname+"&interval="+URLTime+"&outputsize=full&apikey=WKMM7FGAW7V19SLN";
-        }
+
+
+    }
+
+
+    public void volleycallmethodapi (String url)
+    {
 
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -733,7 +935,14 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
                         entries1.clear();
                         labelsforvolume.clear();
 
-                        parseJsonData(response.toString());
+                        if (signal_api_call=='M' || signal_api_call=='Y')
+                        {
+                            parseJsonData(response);
+                        }
+                        else if (signal_api_call=='I' || signal_api_call=='W')
+                        {
+                            mindatastocksymbol(response);
+                        }
 
                     }
                 },
@@ -742,18 +951,119 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
+
+                        labels.clear();
+                        Xaxis_value.clear();
+                        entries.clear();
+                        entries1.clear();
+                        labelsforvolume.clear();
                     }
 
 
                 }
-
         ) {
 
         };
 
-        int x=2;// retry count
-        postRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 48,
-                x, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        postRequest.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 50000;
+            }
+
+            @Override
+            public int getCurrentRetryCount() {
+                return 50000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+
+            }
+        });
+        queue.add(postRequest);
+    }
+
+
+    public void WeeklyYearlyAPi( String url) {
+
+
+
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest postRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+
+                        labels.clear();
+                        Xaxis_value.clear();
+                        entries.clear();
+                        entries1.clear();
+                        labelsforvolume.clear();
+                        // response
+                        Log.d("Response", response);
+
+                        try {
+                            JSONArray contacts = null;
+                            JSONObject object = null;
+                            object = new JSONObject(response);
+                            contacts = object.getJSONArray("data");
+                            int s = contacts.length();
+                            String asd = String.valueOf(contacts);
+                            Weekly_yearly_parseJsonData(asd);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        Log.d("ERROR","error => "+error.toString());
+                        labels.clear();
+                        Xaxis_value.clear();
+                        entries.clear();
+                        entries1.clear();
+                        labelsforvolume.clear();
+
+                        String aasd= error.toString();
+                    }
+                }
+        ) {
+
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<String, String>();
+                String creds = String.format("%s:%s","788e3c656c0e4e0b579cad93b9efd853","c1c2a2c03556ee69689e4ac572892d53");
+                String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.NO_WRAP);
+                params.put("Authorization", auth);
+                return params;
+            }
+
+        };
+
+        postRequest.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 50000;
+            }
+
+            @Override
+            public int getCurrentRetryCount() {
+                return 50000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+
+            }
+        });
         queue.add(postRequest);
 
     }
@@ -761,21 +1071,52 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
 
 
 
+
+    @SuppressLint("TrulyRandom")
+    public static void handleSSLHandshake() {
+        try {
+            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
+
+                @Override
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
+
+                @Override
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
+            }};
+
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String arg0, SSLSession arg1) {
+                    return true;
+                }
+            });
+        } catch (Exception ignored) {
+        }
+    }
+
+
+
     public void GetPercentage(String stockname) {
 
 
-        String url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="+stockname+"&outputsize=full&apikey=U3BSFX821P0F5N5W";
-
-
+        String url = "https://api.iextrading.com/1.0/stock/"+stockname+"/chart";
         RequestQueue queue = Volley.newRequestQueue(this);
-
         StringRequest postRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>()
                 {
                     @Override
                     public void onResponse(String response) {
 
-                        CalculatePercentage(response.toString());
+
+                        CalculatePercentage(response);
 
                     }
                 },
@@ -793,9 +1134,9 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
 
         };
 
-        int x=2;// retry count
-        postRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 48,
-                x, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        postRequest.setRetryPolicy(new DefaultRetryPolicy
+                (DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2,
+                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(postRequest);
 
     }
@@ -805,7 +1146,6 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
     void CalculatePercentage(String jsonString) {
 
 
-        String close = "";
         String current_close = null;
         String yesterday_close = null;
 
@@ -813,34 +1153,35 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         float tot_percent;
 
 
-        String key = null;
-        JSONObject jsonObject = null;
+        JSONArray json = null;
+
+
         try {
-            jsonObject = new JSONObject(jsonString);
-            JSONObject jsonChildObject = (JSONObject)jsonObject.get("Time Series (Daily)");
+            int i = 0;
+            json = new JSONArray(jsonString);
 
-            JSONArray objnames = jsonChildObject.names();
-            for(int j = 0 ; j < 3; j++) {
-                key = objnames.getString(j);
+            int length = json.length();
+            int currclo = length-1;
+            int yest_cl = length-2;
+            for (int j = json.length()-1; j >json.length()-3 ; j--) {
+                HashMap<String, String> map = new HashMap<String, String>();
+                JSONObject e = json.getJSONObject(j);
 
-                close = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("4. close"));
-                if (j ==0 )
+                String clos = e.getString("close");
+
+                if (j ==currclo )
                 {
-                    current_close = close;
+                    current_close = clos;
                 }
-                if (j ==1)
+                if (j ==yest_cl)
                 {
-                    yesterday_close = close;
+                    yesterday_close = clos;
                 }
+
             }
 
-
             tot_difference = (Float.parseFloat(current_close) - Float.parseFloat(yesterday_close));
-
-
             tot_percent =((tot_difference/Float.parseFloat(yesterday_close))*100);
-
-
             DecimalFormat f = new DecimalFormat("##.00");
 
             float value= Float.parseFloat(f.format(tot_difference));
@@ -857,170 +1198,178 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
                 percen_Symbol.setText(String.valueOf(value) +" (" + String.valueOf(total_per)+"%)");
                 percen_Symbol.setTextColor(Color.parseColor("#8b0000"));
             }
-
-
-
-
-
-
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
 
-
-
     }
 
 
+    public void Weekly_yearly_parseJsonData( String jsonString)
+    {
+        JSONArray json = null;
+        ArrayList<CandleEntry> entries = new ArrayList<>();
 
-
-    void parseJsonData(String jsonString) {
-        String open = "";
-        String high = "";
-        String low = "";
-        String close = "";
-        String volume = "";
-
-        String []chose_week;
-        int week_date = 0;
-        int month_date = 0;
-
-        int year = 0;
-
-
-        String[] split;
-
+        final ArrayList<String> xVals = new ArrayList<String>();
+        final ArrayList<Entry> yVals = new ArrayList<Entry>();
 
         try {
-            int i = 0;
-            JSONObject jsonObject = new JSONObject(jsonString);
-            JSONObject jsonChildObject = (JSONObject)jsonObject.get(TimeSeries);
-            int length = jsonChildObject.length();
+            int i =0;
+            json = new JSONArray(jsonString);
 
+            int length = json.length();
             colors = null;
-            String date= "";
             colors = new int[length];
-            Iterator iterator = jsonChildObject.keys();
-            String key = null;
+            xVals.clear();
+            yVals.clear();
+            for(int j=json.length()-1;j>0;j--) {
+                HashMap<String, String> map = new HashMap<String, String>();
+                JSONObject e = json.getJSONObject(j);
 
-            JSONArray objnames = jsonChildObject.names();
-            for(int j = objnames.length()-1; j > 0; j--) {
-                key = objnames.getString(j);
+                String open = e.getString("open");
+                String high = e.getString("high");
+                String low = e.getString("low");
+                String close = e.getString("close");
+                String time = e.getString("date");
 
-                if (S_C_T == 'D' || S_C_T == 'W' || S_C_T == 'M') {
-                    Xaxis_value.add(String.valueOf(key));
-                    chose_week = key.split("-");
-                    month_date = Integer.parseInt(chose_week[1]);
-                    year = Integer.parseInt(chose_week[0]);
+                String vol = e.getString("volume");
+                String [] split = time.split("-");
 
 
-                } else if (S_C_T == 'I') {
-                    split = key.split(" ");
-                    date = split[0];
-
-                    chose_week = date.split("-");
-                    week_date = Integer.parseInt(chose_week[2]);
-
-                    Xaxis_value.add(String.valueOf(split[1]));
-                }
-
-                high = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("2. high"));
-                low = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("3. low"));
-                open = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("1. open"));
-                close = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("4. close"));
-                volume = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("5. volume"));
-
+                xVals.add(split[1]);
+                yVals.add(new Entry(i, Float.valueOf(close)));
+                labels.add("abc");
+                entries1.add(new BarEntry(i, Float.valueOf(vol)));
+                labelsforvolume.add(Float.valueOf(vol));
+                Xaxis_value.add(time);
 
                 if (Float.valueOf(close) >= Float.valueOf(open)) {
                     colors[i] = Color.parseColor("#1D8348");
-                }
-                else {
+                } else {
                     colors[i] = Color.parseColor("#E74C3C");
                 }
 
-                if (date.contains("2018-01-23") && signal_api_call == 'I') {
-
-                    mDatabase.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
-                    entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
-                    labels.add(key);
-                    entries1.add(new BarEntry(i, Float.valueOf(volume)));
-                    labelsforvolume.add(Float.valueOf(volume));
-                }
-
-                else if (signal_api_call=='W' && 22 - week_date <=5)
-                {
-
-                    mDatabase.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
-                    entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
-                    labels.add(key);
-                    entries1.add(new BarEntry(i, Float.valueOf(volume)));
-                    labelsforvolume.add(Float.valueOf(volume));
-                }
-
-                else if (signal_api_call=='M' && 12 - month_date <=3  && year ==2017)
-                {
-                    mDatabase.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
-                    entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
-                    labels.add(key);
-                    entries1.add(new BarEntry(i, Float.valueOf(volume)));
-                    labelsforvolume.add(Float.valueOf(volume));
-                }
-
-                else if (signal_api_call=='Y' && 12 - month_date <=10 && year ==2017)
-                {
-                    mDatabase.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
-                    entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
-                    labels.add(key);
-                    entries1.add(new BarEntry(i, Float.valueOf(volume)));
-                    labelsforvolume.add(Float.valueOf(volume));
-                }
-
-
-                else if (signal_api_call=='Z' && 2017 - year <=5)
-                {
-                    mDatabase.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
-                    entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
-                    labels.add(key);
-                    entries1.add(new BarEntry(i, Float.valueOf(volume)));
-                    labelsforvolume.add(Float.valueOf(volume));
-                }
-
-                else if (signal_api_call=='A')
-                {
-                    mDatabase.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
-                    entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
-                    labels.add(key);
-                    entries1.add(new BarEntry(i, Float.valueOf(volume)));
-                    labelsforvolume.add(Float.valueOf(volume));
-                }
-
-                float a = Collections.max(labelsforvolume);
-
-                if (a >1000)
-                {
-                    volumetext.setText("ThOUSAND");
-                }
-                else if (a >100000)
-                {
-                    volumetext.setText("MILLION");
-                }
-
+                entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
                 i++;
             }
-            setupchart();
 
-        } catch (JSONException e1) {
-            e1.printStackTrace();
 
+
+
+            LineDataSet set1;
+            set1 = new LineDataSet(yVals, "DataSet 1");
+            set1.setFillAlpha(110);
+            set1.setFillColor(Color.RED);
+            set1.setDrawValues(false);
+            set1.setDrawCircles(false);
+            set1.setColors(colors);
+            set1.setAxisDependency(YAxis.AxisDependency.RIGHT);
+
+            ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+            dataSets.add(set1); // add the datasets
+            LineData lidata = new LineData();
+            lidata.addDataSet(set1);
+
+            mChart.invalidate();
+
+            mChart.setDescription(null);
+            mChart.setNoDataText("You need to provide data for the chart.");
+
+            // enable touch gestures
+            mChart.setTouchEnabled(true);
+            mChart.setDrawGridBackground(false);
+            mChart.getLegend().setEnabled(false);
+
+            mChart.getAxisRight().setEnabled(true);
+            mChart.getAxisLeft().setEnabled(false);
+            mChart.invalidate();
+            mChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+            mChart.setData(lidata);
+            mChart.invalidate();
+
+            XAxis xAxis = mChart.getXAxis();
+            xAxis.setValueFormatter(new IndexAxisValueFormatter(xVals));
+
+
+            int si = Xaxis_value.size();
+            dataset = new CandleDataSet(entries,"Entries");
+            dataset.setDecreasingColor(Color.parseColor("#E74C3C"));
+            dataset.setDecreasingPaintStyle(Paint.Style.FILL_AND_STROKE);
+            dataset.setIncreasingColor(Color.parseColor("#1D8348"));
+            dataset.setIncreasingPaintStyle(Paint.Style.FILL_AND_STROKE);
+            dataset.setDrawValues(false);
+            dataset.setNeutralColor(Color.parseColor("#1D8348"));
+            dataset.setShadowColorSameAsCandle(true);
+
+            CandleData data = new CandleData(dataset);
+            dataset.setColors(colors);
+            candleStickChart.setData(data);
+            candleStickChart.setDescription(null);
+            candleStickChart.getLegend().setEnabled(false);
+            dataset.notifyDataSetChanged();
+            candleStickChart.notifyDataSetChanged();
+            candleStickChart.invalidate();
+
+            candleStickChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+                @Override
+                public void onValueSelected(Entry e, Highlight h) {
+                    if (e instanceof CandleEntry) {
+                        CandleEntry ce = (CandleEntry) e;
+
+
+                        String asdf= String.valueOf( ce.getX());
+                        tv_high.setText("High: " + ce.getHigh());
+                        tv_low.setText("Low: " + ce.getLow());
+                        tv_open.setText("Open: " + ce.getOpen());
+                        tv_close.setText("Close: " + ce.getClose());
+                        tv_volume.setText("Volume: " +  getStringofvolume(labelsforvolume.get(candleStickChart.getCandleData().getDataSetForEntry(e).getEntryIndex(ce))));
+                        x_time.setText("Time: " +  Xaxis_value.get(candleStickChart.getCandleData().getDataSetForEntry(e).getEntryIndex(ce)));
+
+                        llt_markerview.setVisibility(View.VISIBLE);
+
+                        if (timer != null)
+                            timer.cancel();
+                        timer = new CountDownTimer(5000, 1000) {
+                            @Override
+                            public void onTick(long l) {
+
+                            }
+
+                            @Override
+                            public void onFinish() {
+
+                                llt_markerview.setVisibility(View.GONE);
+                            }
+                        };
+                        timer.start();
+                    }
+                }
+
+                @Override
+                public void onNothingSelected() {
+
+                }
+            });
+
+
+            XAxis xAxis1 = candleStickChart.getXAxis();
+            xAxis1.setValueFormatter(new IndexAxisValueFormatter(Xaxis_value));
+            xAxis1.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis1.setTextSize(5);
+
+
+            YAxis leftYAxis = candleStickChart.getAxisLeft();
+            leftYAxis.setEnabled(false);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
-
-
         BarDataSet set = new BarDataSet(entries1, "");
-        set.setValueTextSize(2);
+        set.setDrawValues(false);
+        set.setColors(colors);
         BarData data = new BarData(set);
         data.setBarWidth(0.9f); // set custom bar width
         chart.setData(data);
@@ -1039,207 +1388,420 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         leftYAxis.setEnabled(false);
 
         YAxis rightYAxis = chart.getAxisRight();
-        rightYAxis.setEnabled(true);
-//                    rightYAxis.setMaxWidth(15);
-
-            rightYAxis.setLabelCount(2, true);
-//            rightYAxis.setSpaceMax(3);
-            rightYAxis.setAxisLineWidth(3);
-            rightYAxis.setAxisMaximum(3);
-            rightYAxis.setMaxWidth(3);
-
+        rightYAxis.setEnabled(false);
+//
     }
 
-    void FirebaseDataFetch ()
-    {
 
-        String asd ="";
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-
-        database.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                dialog.dismiss();
-
-                String open = "";
-                String high = "";
-                String low = "";
-                String close = "";
-                String volume = "";
-
-                String []chose_week;
-                int week_date = 0;
-                int month_date = 0;
-
-                int year = 0;
+    void parseJsonData(String jsonString) {
 
 
-                String[] split;
+        JSONArray json = null;
+        ArrayList<CandleEntry> entries = new ArrayList<>();
 
-                String [] stockdatasplit;
-
-                int i = 0;
-                colors = null;
-                String date = "";
-                colors = new int[1000];
-                for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
-
-                    String key = noteDataSnapshot.getKey();
-                    String value = String.valueOf(noteDataSnapshot.getValue());
+        final ArrayList<String> xVals = new ArrayList<String>();
+        final ArrayList<Entry> yVals = new ArrayList<Entry>();
 
 
+        try {
+            int i = 0;
+            json = new JSONArray(jsonString);
 
-                    try {
+            int length = json.length();
+            colors = null;
+            colors = new int[length];
 
-
-
-                        if (S_C_T == 'D' || S_C_T == 'W' || S_C_T == 'M') {
-
-
-
-
-                            chose_week = key.split("-");
-                            month_date = Integer.parseInt(chose_week[1]);
-                            year = Integer.parseInt(chose_week[0]);
-
-                            String month_ns= getMonthForInt(month_date);
-                            String cutString = month_ns.substring(0, 3);
-                            Xaxis_value.add(String.valueOf(cutString));
+            xVals.clear();
+            yVals.clear();
+            for (int j = 0; j < json.length(); j++) {
+                HashMap<String, String> map = new HashMap<String, String>();
+                JSONObject e = json.getJSONObject(j);
 
 
-                        } else if (S_C_T == 'I') {
-                            split = key.split(" ");
-                            date = split[0];
+                String open = e.getString("open");
+                String high = e.getString("high");
+                String low = e.getString("low");
+                String close = e.getString("close");
+                String time = e.getString("date");
 
-                            chose_week = date.split("-");
-                            week_date = Integer.parseInt(chose_week[2]);
-                            Xaxis_value.add(String.valueOf(split[1]));
-                        }
-
-
-                        stockdatasplit = value.split(",");
-
-                        high = stockdatasplit[0];
-                        low = stockdatasplit[1];
-                        open = stockdatasplit[2];
-                        close = stockdatasplit[3];
-                        volume = stockdatasplit[4];
-                        if (Float.valueOf(close) >= Float.valueOf(open)) {
-                            colors[i] = Color.parseColor("#1D8348");
-                        } else {
-                            colors[i] = Color.parseColor("#E74C3C");
-                        }
-
-                        if (date.contains("2018-01-23") && signal_api_call == 'I') {
-
-//                            mDatabase.child("Symbols").child(Stock_N).child("I").child(key).setValue(high + "," + low + "," + open + "," + close);
-                            entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
-                            labels.add(key);
-                            entries1.add(new BarEntry(i, Float.valueOf(volume)));
-                            labelsforvolume.add(Float.valueOf(volume));
-
-                        } else if (signal_api_call == 'W' && 22 - week_date <= 5) {
-                            entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
-                            labels.add(key);
-                            entries1.add(new BarEntry(i, Float.valueOf(volume)));
-                            labelsforvolume.add(Float.valueOf(volume));
-                        } else if (signal_api_call == 'M' && 12 - month_date <= 3 && year == 2017) {
-                            entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
-                            labels.add(key);
-                            entries1.add(new BarEntry(i, Float.valueOf(volume)));
-                            labelsforvolume.add(Float.valueOf(volume));
-                        } else if (signal_api_call == 'Y' && 12 - month_date <= 10 && year == 2017) {
-                            entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
-                            labels.add(key);
-                            entries1.add(new BarEntry(i, Float.valueOf(volume)));
-                            labelsforvolume.add(Float.valueOf(volume));
-                        } else if (signal_api_call == 'Z' && 2017 - year <= 5) {
-                            entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
-                            labels.add(key);
-                            entries1.add(new BarEntry(i, Float.valueOf(volume)));
-                            labelsforvolume.add(Float.valueOf(volume));
-                        } else if (signal_api_call == 'A') {
-                            entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
-                            labels.add(key);
-                            entries1.add(new BarEntry(i, Float.valueOf(volume)));
-                            labelsforvolume.add(Float.valueOf(volume));
-                        }
-
-                        float a = Collections.max(labelsforvolume);
-
-                        if (a >1000)
-                        {
-                            volumetext.setText("ThOUSAND");
-                        }
-                        else if (a >100000)
-                        {
-                            volumetext.setText("MILLION");
-                        }
-                        i++;
-                    }
-                    catch (Exception e){
-                    }
-
-                    setupchart();
+                String [] split = time.split("-");
 
 
-                    BarDataSet set = new BarDataSet(entries1, "");
-                    set.setValueTextSize(2);
-                    BarData data = new BarData(set);
-                    data.setBarWidth(0.9f); // set custom bar width
-                    chart.setData(data);
-                    chart.setFitBars(true); // make the x-axis fit exactly all bars
-                    chart.invalidate(); // refre
-                    chart.setDescription(null);
-                    chart.setDescription(null);    // Hide the description
-                    chart.getLegend().setEnabled(false);
+                xVals.add(split[2]);
 
+                yVals.add(new Entry(i, Float.valueOf(close)));
 
-                    XAxis xAxis = chart.getXAxis();
-                    xAxis.setEnabled(false);
-                    xAxis.setDrawAxisLine(false);
+                String vol = e.getString("volume");
 
-                    YAxis leftYAxis = chart.getAxisLeft();
-                    leftYAxis.setEnabled(false);
+                labels.add("abc");
+                entries1.add(new BarEntry(i, Float.valueOf(vol)));
+                labelsforvolume.add(Float.valueOf(vol));
+                Xaxis_value.add(time);
 
-
-                    YAxis rightYAxis = chart.getAxisRight();
-                    rightYAxis.setEnabled(true);
-//                    rightYAxis.setMaxWidth(15);
-
-
-
-                        rightYAxis.setLabelCount(2, true);
-//                        rightYAxis.setSpaceMax(3);
-//                        rightYAxis.setAxisLineWidth(3);
-                        rightYAxis.setAxisMaximum(3);
-                        rightYAxis.setMaxWidth(3);
-
-
+                if (Float.valueOf(close) >= Float.valueOf(open)) {
+                    colors[i] = Color.parseColor("#1D8348");
+                } else {
+                    colors[i] = Color.parseColor("#E74C3C");
                 }
 
+                entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
+                i++;
             }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+            LineDataSet set1;
+            set1 = new LineDataSet(yVals, "DataSet 1");
+//            set1.setFillAlpha(110);
+            set1.setFillColor(Color.RED);
+            set1.setDrawValues(false);
+            set1.setDrawCircles(false);
+            set1.setColors(colors);
+            set1.setAxisDependency(YAxis.AxisDependency.RIGHT);
 
-            }
+            ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+            dataSets.add(set1); // add the datasets
+            LineData lidata = new LineData();
+            lidata.addDataSet(set1);
 
-        });
+            mChart.invalidate();
+
+            mChart.setDescription(null);
+            mChart.setNoDataText("You need to provide data for the chart.");
+
+            // enable touch gestures
+            mChart.setTouchEnabled(true);
+            mChart.setDrawGridBackground(false);
+            mChart.getLegend().setEnabled(false);
+
+            mChart.getAxisRight().setEnabled(true);
+            mChart.getAxisLeft().setEnabled(false);
+            mChart.invalidate();
+            mChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+            mChart.setData(lidata);
+            mChart.invalidate();
+
+            XAxis xAxis = mChart.getXAxis();
+            xAxis.setValueFormatter(new IndexAxisValueFormatter(xVals));
 
 
-    }
+
+            int si = Xaxis_value.size();
+            dataset = new CandleDataSet(entries, "Entries");
+            dataset.setDecreasingColor(Color.parseColor("#E74C3C"));
+            dataset.setDecreasingPaintStyle(Paint.Style.FILL_AND_STROKE);
+            dataset.setIncreasingColor(Color.parseColor("#1D8348"));
+            dataset.setIncreasingPaintStyle(Paint.Style.FILL_AND_STROKE);
+            dataset.setDrawValues(false);
+            dataset.setNeutralColor(Color.parseColor("#1D8348"));
+            dataset.setShadowColorSameAsCandle(true);
+
+            CandleData data = new CandleData(dataset);
+            dataset.setColors(colors);
+            candleStickChart.setData(data);
+            candleStickChart.setDescription(null);
+            candleStickChart.getLegend().setEnabled(false);
+            dataset.notifyDataSetChanged();
+            candleStickChart.notifyDataSetChanged();
+            candleStickChart.invalidate();
+
+            candleStickChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+                @Override
+                public void onValueSelected(Entry e, Highlight h) {
+                    if (e instanceof CandleEntry) {
+                        CandleEntry ce = (CandleEntry) e;
 
 
-    String getMonthForInt(int num) {
-        String month = "";
-        DateFormatSymbols dfs = new DateFormatSymbols();
-        String[] months = dfs.getMonths();
-        if (num >= 0 && num <= 11 ) {
-            month = months[num];
+                        String asdf = String.valueOf(ce.getX());
+                        tv_high.setText("High: " + ce.getHigh());
+                        tv_low.setText("Low: " + ce.getLow());
+                        tv_open.setText("Open: " + ce.getOpen());
+                        tv_close.setText("Close: " + ce.getClose());
+                        tv_volume.setText("Volume: " + getStringofvolume(labelsforvolume.get(candleStickChart.getCandleData().getDataSetForEntry(e).getEntryIndex(ce))));
+                        x_time.setText("Time: " + Xaxis_value.get(candleStickChart.getCandleData().getDataSetForEntry(e).getEntryIndex(ce)));
+
+                        llt_markerview.setVisibility(View.VISIBLE);
+
+                        if (timer != null)
+                            timer.cancel();
+                        timer = new CountDownTimer(5000, 1000) {
+                            @Override
+                            public void onTick(long l) {
+
+                            }
+
+                            @Override
+                            public void onFinish() {
+
+                                llt_markerview.setVisibility(View.GONE);
+                            }
+                        };
+                        timer.start();
+                    }
+                }
+
+                @Override
+                public void onNothingSelected() {
+
+                }
+            });
+
+            XAxis xAxis1 = candleStickChart.getXAxis();
+            xAxis1.setValueFormatter(new IndexAxisValueFormatter(Xaxis_value));
+            xAxis1.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis1.setTextSize(5);
+
+
+            YAxis leftYAxis = candleStickChart.getAxisLeft();
+            leftYAxis.setEnabled(false);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        return month;
+
+        BarDataSet set = new BarDataSet(entries1, "");
+        set.setDrawValues(false);
+        set.setColors(colors);
+        BarData data = new BarData(set);
+        data.setBarWidth(0.9f); // set custom bar width
+        chart.setData(data);
+        chart.setFitBars(true); // make the x-axis fit exactly all bars
+        chart.invalidate(); // refre
+        chart.setDescription(null);
+        chart.setDescription(null);    // Hide the description
+        chart.getLegend().setEnabled(false);
+
+
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setEnabled(false);
+        xAxis.setDrawAxisLine(false);
+
+        YAxis leftYAxis = chart.getAxisLeft();
+        leftYAxis.setEnabled(false);
+
+        YAxis rightYAxis = chart.getAxisRight();
+        rightYAxis.setEnabled(false);
+
+
     }
+
+    public void mindatastocksymbol (String jsonString)
+    {
+
+        final ArrayList<String> xVals = new ArrayList<String>();
+        final ArrayList<Entry> yVals = new ArrayList<Entry>();
+
+        String open = "";
+        String high = "";
+        String low = "";
+        String close = "";
+        String volume = "";
+
+
+        try {
+            int i = 0;
+            JSONObject jsonObject = new JSONObject(jsonString);
+            JSONObject jsonChildObject = null;
+            if (signal_api_call=='I')
+            {
+                jsonChildObject = (JSONObject)jsonObject.get("Time Series (1min)");
+            }
+
+            if (signal_api_call=='W')
+            {
+                 jsonChildObject = (JSONObject)jsonObject.get("Time Series (15min)");
+
+            }
+            int length = jsonChildObject.length();
+
+            colors = null;
+            colors = new int[length];
+            String key = null;
+
+            JSONArray objnames = jsonChildObject.names();
+            for(int j = objnames.length()-1; j > 0; j--) {
+                key = objnames.getString(j);
+                Xaxis_value.add(key);
+
+                high = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("2. high"));
+                low = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("3. low"));
+                open = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("1. open"));
+                close = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("4. close"));
+                volume = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("5. volume"));
+
+
+                String [] split = key.split(" ");
+
+
+                xVals.add(split[1]);
+
+                yVals.add(new Entry(i, Float.valueOf(close)));
+                entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
+                labels.add(key);
+                entries1.add(new BarEntry(i, Float.valueOf(volume)));
+                labelsforvolume.add(Float.valueOf(volume));
+
+                if (Float.valueOf(close) >= Float.valueOf(open)) {
+                    colors[i] = Color.parseColor("#1D8348");
+                }
+                else {
+                    colors[i] = Color.parseColor("#E74C3C");
+                }
+
+                i++;
+            }
+
+
+
+            LineDataSet set1;
+            set1 = new LineDataSet(yVals, "DataSet 1");
+//            set1.setFillAlpha(110);
+            set1.setFillColor(Color.RED);
+            set1.setDrawValues(false);
+            set1.setDrawCircles(false);
+            set1.setColors(colors);
+            set1.setAxisDependency(YAxis.AxisDependency.RIGHT);
+
+            ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+            dataSets.add(set1); // add the datasets
+            LineData lidata = new LineData();
+            lidata.addDataSet(set1);
+
+            mChart.invalidate();
+
+            mChart.setDescription(null);
+            mChart.setNoDataText("You need to provide data for the chart.");
+
+            // enable touch gestures
+            mChart.setTouchEnabled(true);
+            mChart.setDrawGridBackground(false);
+            mChart.getLegend().setEnabled(false);
+            mChart.getAxisRight().setEnabled(true);
+            mChart.getAxisLeft().setEnabled(false);
+            mChart.invalidate();
+            mChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+            mChart.setData(lidata);
+            mChart.invalidate();
+
+            XAxis xAxis = mChart.getXAxis();
+            xAxis.setValueFormatter(new IndexAxisValueFormatter(xVals));
+
+            dataset = new CandleDataSet(entries,"Entries");
+            dataset.setDecreasingColor(Color.parseColor("#E74C3C"));
+            dataset.setDecreasingPaintStyle(Paint.Style.FILL_AND_STROKE);
+            dataset.setIncreasingColor(Color.parseColor("#1D8348"));
+            dataset.setIncreasingPaintStyle(Paint.Style.FILL_AND_STROKE);
+            dataset.setDrawValues(false);
+            dataset.setNeutralColor(Color.parseColor("#1D8348"));
+            dataset.setShadowColorSameAsCandle(true);
+
+            CandleData data = new CandleData(dataset);
+            dataset.setColors(colors);
+            candleStickChart.setData(data);
+            candleStickChart.setDescription(null);
+            candleStickChart.getLegend().setEnabled(false);
+            dataset.notifyDataSetChanged();
+            candleStickChart.notifyDataSetChanged();
+            candleStickChart.invalidate();
+
+            candleStickChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+                @Override
+                public void onValueSelected(Entry e, Highlight h) {
+                    if (e instanceof CandleEntry) {
+                        CandleEntry ce = (CandleEntry) e;
+
+
+                        String asdf= String.valueOf( ce.getX());
+                        tv_high.setText("High: " + ce.getHigh());
+                        tv_low.setText("Low: " + ce.getLow());
+                        tv_open.setText("Open: " + ce.getOpen());
+                        tv_close.setText("Close: " + ce.getClose());
+                        tv_volume.setText("Volume: " +  getStringofvolume(labelsforvolume.get(candleStickChart.getCandleData().getDataSetForEntry(e).getEntryIndex(ce))));
+                        x_time.setText("Time: " +  Xaxis_value.get(candleStickChart.getCandleData().getDataSetForEntry(e).getEntryIndex(ce)));
+
+                        llt_markerview.setVisibility(View.VISIBLE);
+
+                        if (timer != null)
+                            timer.cancel();
+                        timer = new CountDownTimer(5000, 1000) {
+                            @Override
+                            public void onTick(long l) {
+
+                            }
+
+                            @Override
+                            public void onFinish() {
+
+                                llt_markerview.setVisibility(View.GONE);
+                            }
+                        };
+                        timer.start();
+                    }
+                }
+
+                @Override
+                public void onNothingSelected() {
+
+                }
+            });
+
+
+            XAxis xAxis1 = candleStickChart.getXAxis();
+            xAxis1.setValueFormatter(new IndexAxisValueFormatter(Xaxis_value));
+            xAxis1.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis1.setTextSize(5);
+
+
+            YAxis leftYAxis = candleStickChart.getAxisLeft();
+            leftYAxis.setEnabled(false);
+
+
+
+
+        } catch (Exception e1) {
+
+            mChart.setNoDataText("No data Available");
+            candleStickChart.setNoDataText("No data Available");
+            chart.setNoDataText("No data Available");
+
+            labels.clear();
+            Xaxis_value.clear();
+            entries.clear();
+            entries1.clear();
+            labelsforvolume.clear();
+
+            dataset.setDrawValues(false);
+
+            Legend leg = candleStickChart.getLegend();
+            leg.setEnabled(false);
+            Toast.makeText(getApplicationContext(), "Please check your internet connection and try again", Toast.LENGTH_LONG).show();
+        }
+
+
+        BarDataSet set = new BarDataSet(entries1, "");
+        set.setDrawValues(false);
+        set.setColors(colors);
+        BarData data = new BarData(set);
+        data.setBarWidth(0.9f); // set custom bar width
+        chart.setData(data);
+        chart.setFitBars(true); // make the x-axis fit exactly all bars
+        chart.invalidate(); // refre
+        chart.setDescription(null);// Hide the description
+        chart.getLegend().setEnabled(false);
+
+
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setEnabled(false);
+        xAxis.setDrawAxisLine(false);
+
+        YAxis leftYAxis = chart.getAxisLeft();
+        leftYAxis.setEnabled(false);
+
+        YAxis rightYAxis = chart.getAxisRight();
+        rightYAxis.setEnabled(false);
+    }
+
+
+
+
 
     public String getStringofvolume(float value){
         String str=String.valueOf(value);
@@ -1403,6 +1965,7 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
                     percen_Symbol.setText("");
                     loadchartdata(holder.stockname.getText().toString());
                     GetPercentage(holder.stockname.getText().toString());
+                    setcompanydetails();
 
                 }
             });
@@ -1416,4 +1979,195 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
     }
 
 
+
+
+
+    @Override
+    public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+        Log.i("Gesture", "START, x: " + me.getX() + ", y: " + me.getY());
+    }
+
+    @Override
+    public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+        Log.i("Gesture", "END, lastGesture: " + lastPerformedGesture);
+
+        // un-highlight values after the gesture is finished and no single-tap
+        if(lastPerformedGesture != ChartTouchListener.ChartGesture.SINGLE_TAP)
+            mChart.highlightValues(null); // or highlightTouch(null) for callback to onNothingSelected(...)
+    }
+
+    @Override
+    public void onChartLongPressed(MotionEvent me) {
+        Log.i("LongPress", "Chart longpressed.");
+    }
+
+    @Override
+    public void onChartDoubleTapped(MotionEvent me) {
+        Log.i("DoubleTap", "Chart double-tapped.");
+    }
+
+    @Override
+    public void onChartSingleTapped(MotionEvent me) {
+        Log.i("SingleTap", "Chart single-tapped.");
+    }
+
+    @Override
+    public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
+        Log.i("Fling", "Chart flinged. VeloX: " + velocityX + ", VeloY: " + velocityY);
+    }
+
+    @Override
+    public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
+        Log.i("Scale / Zoom", "ScaleX: " + scaleX + ", ScaleY: " + scaleY);
+    }
+
+    @Override
+    public void onChartTranslate(MotionEvent me, float dX, float dY) {
+        Log.i("Translate / Move", "dX: " + dX + ", dY: " + dY);
+    }
+
+
+    public void Foundamentals() {
+
+        String url = "https://api.intrinio.com/data_point?identifier="+Stock_N+"&item=marketcap,totalrevenue,profitmargin,pricetoearnings,basiceps,cashdividendspershare,short_interest,weightedavebasicsharesos";
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest postRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+
+
+                        String asd1= response;
+                        Log.d("Response", response);
+
+                        try {
+                            JSONArray contacts = null;
+                            JSONObject object = null;
+                            object = new JSONObject(response);
+                            contacts = object.getJSONArray("data");
+
+
+                            ArrayList<DataModelFund> dataModels;
+                            CustomAdaptorFund adapter;
+
+
+                            dataModels= new ArrayList<>();
+
+                            for(int i=0; i<contacts.length(); i++){
+                                JSONObject json_data = contacts.getJSONObject(i);
+
+                                String Item = json_data.getString("item");
+                                String value = json_data.getString("value");
+
+                                dataModels.add(new DataModelFund(Fundamentname[i], "asd", value,"September"));
+                            }
+
+                            adapter= new CustomAdaptorFund(dataModels,getApplicationContext());
+
+                            listViewfun.setAdapter(adapter);
+                            listViewfun.setOnTouchListener(new ListView.OnTouchListener() {
+                                @Override
+                                public boolean onTouch(View v, MotionEvent event) {
+                                    int action = event.getAction();
+                                    switch (action) {
+                                        case MotionEvent.ACTION_DOWN:
+                                            // Disallow ScrollView to intercept touch events.
+                                            v.getParent().requestDisallowInterceptTouchEvent(true);
+                                            break;
+
+                                        case MotionEvent.ACTION_UP:
+                                            // Allow ScrollView to intercept touch events.
+                                            v.getParent().requestDisallowInterceptTouchEvent(false);
+                                            break;
+                                    }
+
+                                    // Handle ListView touch events.
+                                    v.onTouchEvent(event);
+                                    return true;
+                                }
+                            });
+//                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                                @Override
+//                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                                    DataModelFund dataModel= dataModels.get(position);
+//
+//                                    Snackbar.make(view, dataModel.getName()+"\n"+dataModel.getType()+" API: "+dataModel.getVersion_number(), Snackbar.LENGTH_LONG)
+//                                            .setAction("No action", null).show();
+//                                }
+//                            });
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        Log.d("ERROR","error => "+error.toString());
+                    }
+                }
+        ) {
+
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<String, String>();
+                String creds = String.format("%s:%s","788e3c656c0e4e0b579cad93b9efd853","c1c2a2c03556ee69689e4ac572892d53");
+                String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.NO_WRAP);
+                params.put("Authorization", auth);
+                return params;
+            }
+
+        };
+
+        postRequest.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 50000;
+            }
+
+            @Override
+            public int getCurrentRetryCount() {
+                return 50000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+
+            }
+        });
+        queue.add(postRequest);
+
+    }
+
+    public void Fundadetails( String jsonString) {
+
+        jsonString = jsonString.substring(1, jsonString.length()-1);
+        JSONArray json = null;
+
+        try {
+            json = new JSONArray(jsonString);
+
+            for (int j =  1; j > json.length()-1; j++) {
+                HashMap<String, String> map = new HashMap<String, String>();
+                JSONObject e = json.getJSONObject(j);
+
+                String asdmark = e.getString("item");
+                asdmark = "asdf";
+
+
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 }

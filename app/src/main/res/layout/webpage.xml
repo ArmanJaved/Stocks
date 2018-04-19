@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+
+                <TextView
+
+                    android:padding="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Help"
+                    android:textStyle="bold"
+                    android:textSize="25sp"
+                    android:layout_marginTop="0dp"
+                    android:textColor="#607d8b" />
+
+
+
+        <TextView
+
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Time Frames"
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:textColor="#000" />
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="What is a candlestick chart "
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="How candle stick charts are read  "
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="What are the advantages of candlesticks   "
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Top gainers   "
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Top Losers   "
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Watchlist  "
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Volume  "
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

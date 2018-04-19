@@ -18,7 +18,6 @@ public class Watch {
 
     }
 
-
     public String getRestId() {
         return restId;
     }
@@ -34,8 +33,6 @@ public class Watch {
     public String getDate() {
         return date;
     }
-
-
 
     public Watch(String restId, String restname, String restamount, String date) {
         this.date = date;

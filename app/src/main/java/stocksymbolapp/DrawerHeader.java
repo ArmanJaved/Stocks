@@ -11,9 +11,6 @@ import com.mindorks.placeholderview.annotations.Resolve;
 import com.mindorks.placeholderview.annotations.View;
 import com.stocksymbolapp.R;
 
-import stocksymbolapp.Top.Losers.TopLosersActivity;
-import stocksymbolapp.TopGainers.TopGainersActivity;
-
 /**
  * Created by BrainPlow on 12/8/2017.
  */
@@ -31,11 +28,11 @@ public class DrawerHeader {
     private TextView emailTxt;
 
 
-    @View(R.id.top_gainer)
+    @View(R.id.home)
     private TextView top_gainers;
 
-    @View(R.id.top_losers)
-    private TextView top_losers;
+    @View(R.id.Settings)
+    private TextView setting;
 
     @View(R.id.help)
     private TextView help;
@@ -63,16 +60,16 @@ public class DrawerHeader {
             @Override
             public void onClick(android.view.View v) {
 
-                Intent init = new Intent(mContext, TopGainersActivity.class);
+                Intent init = new Intent(mContext, GainernLosers.class);
                 init.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
                 mContext.startActivity(init);
             }
         });
-        top_losers.setOnClickListener(new android.view.View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View v) {
 
-                Intent init = new Intent(mContext, TopLosersActivity.class);
+        setting.setOnClickListener(new android.view.View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View view) {
+                Intent init = new Intent(mContext, Setting.class);
                 init.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
                 mContext.startActivity(init);
             }

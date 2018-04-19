@@ -1,0 +1,131 @@
+String open = "";
+        String high = "";
+        String low = "";
+        String close = "";
+        String volume = "";
+
+        String []chose_week;
+        int week_date = 0;
+        int month_date = 0;
+
+        int year = 0;
+
+
+        String[] split;
+
+
+        try {
+            int i = 0;
+            JSONObject jsonObject = new JSONObject(jsonString);
+            JSONObject jsonChildObject = (JSONObject)jsonObject.get("Result");
+            int length = jsonChildObject.length();
+
+            colors = null;
+            String date= "";
+            colors = new int[length];
+            Iterator iterator = jsonChildObject.keys();
+            String key = null;
+
+            JSONArray objnames = jsonChildObject.names();
+            for(int j = objnames.length()-1; j > 0; j--) {
+                key = objnames.getString(j);
+
+                if (S_C_T == 'D' || S_C_T == 'W' || S_C_T == 'M') {
+                    Xaxis_value.add(String.valueOf(key));
+                    chose_week = key.split("-");
+                    month_date = Integer.parseInt(chose_week[1]);
+                    year = Integer.parseInt(chose_week[0]);
+
+
+                } else if (S_C_T == 'I') {
+                    split = key.split(" ");
+                    date = split[0];
+
+                    chose_week = date.split("-");
+                    week_date = Integer.parseInt(chose_week[2]);
+
+                    Xaxis_value.add(String.valueOf(split[1]));
+                }
+
+                high = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("2. high"));
+                low = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("3. low"));
+                open = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("1. open"));
+                close = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("4. close"));
+                volume = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("5. volume"));
+
+                if (Float.valueOf(close) >= Float.valueOf(open)) {
+                    colors[i] = Color.parseColor("#1D8348");
+                }
+                else {
+                    colors[i] = Color.parseColor("#E74C3C");
+                }
+
+                if (date.contains(Previous_Working_day) && signal_api_call == 'I') {
+
+                    mDatabase.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
+                    entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
+                    labels.add(key);
+                    entries1.add(new BarEntry(i, Float.valueOf(volume)));
+                    labelsforvolume.add(Float.valueOf(volume));
+                }
+
+                else if (signal_api_call=='W')
+                {
+
+                    mDatabase.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
+                    entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
+                    labels.add(key);
+                    entries1.add(new BarEntry(i, Float.valueOf(volume)));
+                    labelsforvolume.add(Float.valueOf(volume));
+                }
+
+                else if (signal_api_call=='M' &&  month_date== 2  && year ==2018  ||  signal_api_call=='M' && month_date==1  && year ==2018 || signal_api_call=='M' &&  month_date ==12  && year ==2017 )
+                {
+                    mDatabase.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
+                    entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
+                    labels.add(key);
+                    entries1.add(new BarEntry(i, Float.valueOf(volume)));
+                    labelsforvolume.add(Float.valueOf(volume));
+                }
+
+                else if (signal_api_call=='Y'  && year ==2017 ||  signal_api_call=='Y'  && year ==2018)
+                {
+                    mDatabase.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
+                    entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
+                    labels.add(key);
+                    entries1.add(new BarEntry(i, Float.valueOf(volume)));
+                    labelsforvolume.add(Float.valueOf(volume));
+                }
+
+
+                else if (signal_api_call=='Z'  && 2018 - year <=5)
+                {
+                    mDatabase.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
+                    entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
+                    labels.add(key);
+                    entries1.add(new BarEntry(i, Float.valueOf(volume)));
+                    labelsforvolume.add(Float.valueOf(volume));
+                }
+
+                else if (signal_api_call=='A')
+                {
+                    mDatabase.child("Symbols").child(Stock_N).child(String.valueOf(signal_api_call)).child(key).setValue(high + "," + low  + "," + open + "," + close + "," + volume);
+                    entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
+                    labels.add(key);
+                    entries1.add(new BarEntry(i, Float.valueOf(volume)));
+                    labelsforvolume.add(Float.valueOf(volume));
+                }
+
+
+                i++;
+            }
+            setupchart();
+
+        } catch (Exception e1) {
+
+            String ASD = "";
+
+            dialog.dismiss();
+            Toast.makeText(getApplicationContext(), "Please check your internet connection and try again", Toast.LENGTH_LONG).show();
+
+        }

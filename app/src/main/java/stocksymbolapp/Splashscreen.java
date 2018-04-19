@@ -45,13 +45,14 @@ public class Splashscreen extends FragmentActivity {
                 try {
                     int waited = 0;
                     // Splash screen pause time
-                    while (waited < 4000) {
+                    while (waited < 2000) {
                         sleep(100);
                         waited += 100;
                     }
-//                    Intent intent = new Intent(Splashscreen.this, MainActivity.class);
-                    startActivity(new Intent(Splashscreen.this, MainActivity.class));
-                    Splashscreen.this.finish();
+
+                    Intent init = new Intent(getApplicationContext(), MainActivity.class);
+                    init.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
+                    getApplicationContext().startActivity(init);
                 } catch (InterruptedException e) {
                     // do nothing
                 } finally {

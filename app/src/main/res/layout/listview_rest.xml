@@ -6,35 +6,47 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:padding="5dp"
         android:orientation="horizontal">
 
 
         <TextView
-            android:layout_weight="1"
+            android:layout_weight=".1"
+            android:layout_marginTop="15dp"
             android:id="@+id/Textartistname"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:text="Restaurants"
+            android:text="symbols"
+            android:textStyle="italic"
+            android:fontFamily="sans-serif-medium"
             android:textSize="20sp"
-            android:textColor="#000"
-            android:textStyle="normal" />
+            android:textColor="#000" />
 
-        <ImageView
-            android:src="@drawable/wa_symbol"
+        <!--<com.jjoe64.graphview.GraphView-->
+            <!--android:layout_weight="1"-->
+            <!--android:layout_width="110dp"-->
+            <!--android:layout_height="60dp"-->
+            <!--android:id="@+id/graphline" />-->
+
+
+        <com.github.mikephil.charting.charts.LineChart
             android:layout_weight="1"
-            android:layout_width="150dp"
-            android:layout_height="50dp" />
+            android:id="@+id/asdlinechart"
+            android:layout_width="110dp"
+            android:layout_height="60dp" />
         <TextView
-            android:layout_weight="1"
+            android:textStyle="italic"
+            android:fontFamily="sans-serif-medium"
+            android:layout_weight=".1"
+            android:layout_marginTop="15dp"
             android:id="@+id/Textartistname1"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:text="Date"
+            android:textAlignment="textEnd"
             android:textSize="20sp"
-            android:textColor="#000"
-            android:textStyle="normal" />
+            android:textColor="#000" />
 
 
 

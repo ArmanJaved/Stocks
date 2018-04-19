@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawerLayout"
     android:background="#fff"
     android:layout_width="match_parent"
@@ -206,41 +207,58 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <TextView
+                <Spinner
 
-                    android:layout_weight="1"
-                    android:paddingTop="10dp"
-                    android:id="@+id/tv_stock_name"
+                    android:visibility="gone"
+                    android:layout_weight="0.4"
+                    android:id="@+id/line"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="AAME"
-                    android:textColor="#3d3d3d"
-                    android:textStyle="bold"
-                    android:textSize="19sp"/>
-                <TextView
+                    android:layout_height="wrap_content"/>
 
+
+                <TextView
+                    android:textStyle="italic"
+                    android:fontFamily="sans-serif-medium"
                     android:layout_weight="1"
-                    android:paddingRight="10dp"
+                    android:paddingRight="5dp"
                     android:textAlignment="textEnd"
                     android:id="@+id/percentage_symbol"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=""
-                    android:textColor="#3d3d3d"
-                    android:textStyle="bold"
-                    android:textSize="19sp"/>
+                    android:textColor="#3d3d3d"/>
             </LinearLayout>
 
 
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-                <com.github.mikephil.charting.charts.CandleStickChart
+
+    <com.github.mikephil.charting.charts.CandleStickChart
                     android:layout_marginTop="10dp"
                     android:id="@+id/chart"
                     android:layout_width="match_parent"
                     android:layout_height="240dp">
-                </com.github.mikephil.charting.charts.CandleStickChart>
+    </com.github.mikephil.charting.charts.CandleStickChart>
+
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:visibility="gone"
+        android:id="@+id/asdlinechart"
+        android:layout_width="match_parent"
+        android:layout_height="240dp" />
+
+    <TextView
+
+       android:textSize="22sp"
+        android:padding="10dp"
+        android:id="@+id/tv_stock_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AAME"
+        android:textStyle="italic|bold"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="#3d3d3d" />
     <LinearLayout
         android:alpha="0.8"
         android:id="@+id/llt_markerview"
@@ -334,29 +352,120 @@
 
 
 
-
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/chart1"
                 android:layout_width="match_parent"
                 android:layout_height="100dp" />
 
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:textAlignment="center"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
                 <TextView
-                    android:id="@+id/verticaltextview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textStyle="bold"
+
+                    android:padding="5dp"
                     android:textAlignment="center"
-                    android:textColor="#607d8b"
-                    android:layout_gravity="center" />
-
-
-
-
+                    android:layout_weight="1"
+                    android:textStyle="italic"
+                    android:fontFamily="sans-serif-medium"
+                    android:id="@+id/symbolname"
+                    android:text="TACO"
+                    android:textColor="#1b9af7"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:padding="5dp"
+                    android:textSize="12sp"
+                    android:textStyle="italic"
+                    android:visibility="gone"
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_weight="1"
+                    android:id="@+id/exchangenam"
+                    android:text="[NASQ]"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                
             </LinearLayout>
 
 
 
+                <TextView
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:padding="5dp"
+                    android:textAlignment="center"
+                    android:id="@+id/compnam"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Del Taco Restaurants, Inc."
+                    android:textColor="#1b9af7"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:gravity="center"
+
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:padding="5dp"
+                    android:id="@+id/sector"
+                    android:textStyle="italic"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Services asdf "
+                    android:textColor="#1b9af7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <View
+                    android:layout_margin="10dp"
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#1b9af7" />
+
+                <TextView
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:padding="5dp"
+                    android:id="@+id/industry"
+                    android:text="Resturants asdf asf"
+                    android:textStyle="italic"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="#1b9af7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <View
+                    android:layout_margin="10dp"
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#1b9af7" />
+
+                <TextView
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:padding="5dp"
+                    android:id="@+id/country"
+                    android:text="USA"
+                    android:textStyle="italic"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="#1b9af7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
 
 
 
@@ -366,11 +475,116 @@
             android:id="@+id/watch_list"
             android:layout_width="200dp"
             android:layout_height="40dp"
+            android:textStyle="italic"
+            android:fontFamily="sans-serif-medium"
             android:text="Add to Watchlist"
             android:textColor="#607d8b"
             android:textAllCaps="false"
             android:layout_gravity="center"
             android:background="@drawable/my_button_bg" />
+
+
+            <ScrollView
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <!-- Label -->
+                        <TextView
+                            android:text="@string/employee_name"
+                            style="@style/CategoryStyle" />
+
+                        <!-- Input fields -->
+                        <LinearLayout
+                            android:layout_height="wrap_content"
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:paddingLeft="4dp"
+                            android:orientation="vertical">
+
+                            <!-- Name field -->
+                            <EditText
+                                android:id="@+id/edit_employee_firstname"
+                                android:hint="@string/hint_employee_firstname"
+                                android:inputType="textCapWords"
+                                style="@style/EditorFieldStyle" />
+
+                            <!-- Breed field -->
+                            <EditText
+                                android:id="@+id/edit_employee_lastname"
+                                android:hint="@string/hint_employee_lastname"
+                                android:inputType="textCapWords"
+                                style="@style/EditorFieldStyle" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Title category -->
+                    <LinearLayout
+                        android:id="@+id/employeeTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:text="@string/category_title"
+                            style="@style/CategoryStyle" />
+
+                        <LinearLayout
+                            android:layout_height="wrap_content"
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:paddingLeft="4dp"
+                            android:orientation="vertical">
+
+                            <!-- Name field -->
+                            <EditText
+                                android:id="@+id/edit_employee_title"
+                                android:hint="@string/hint_employee_title"
+                                android:inputType="textCapWords"
+                                style="@style/EditorFieldStyle" />
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:onClick="saveView"
+                        android:text="Save to View"/>
+
+                    <TextView
+                        android:id="@+id/empFirst"
+                        android:layout_width="wrap_content"
+                        android:padding="10dp"
+                        android:layout_height="wrap_content"
+                        android:text=""/>
+                    <TextView
+                        android:id="@+id/empLast"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:text=""/>
+                    <TextView
+                        android:id="@+id/empTitle"
+                        android:layout_width="wrap_content"
+                        android:padding="10dp"
+                        android:layout_height="wrap_content"
+                        android:text=""/>
+
+                </LinearLayout>
+
+            </ScrollView>
 
             <LinearLayout
 
@@ -386,15 +600,19 @@
                     android:padding="20dp"
                     android:layout_weight="1"
                     android:text="Fundamentals"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
+                    android:textStyle="italic"
+                    android:fontFamily="sans-serif-medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
                 <TextView
                     android:id="@+id/news"
                     android:padding="20dp"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:layout_weight="1"
+                    android:textStyle="italic"
+                    android:fontFamily="sans-serif-medium"
                     android:text="News"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -409,21 +627,23 @@
                 android:layout_width="fill_parent"
                 android:layout_height="250dp"
                 android:divider="@null"
+                android:dividerHeight="0dp"/>
+
+            <ListView
+                android:divider="@null"
                 android:dividerHeight="0dp"
-                android:layout_marginBottom="30dp" />
+                android:id="@+id/list"
+                android:layout_width="fill_parent"
+                android:layout_height="250dp" />
 
 
 
 
-    </LinearLayout>
 
-
+        </LinearLayout>
         </ScrollView>
 
     </LinearLayout>
-
-
-
 
 
 

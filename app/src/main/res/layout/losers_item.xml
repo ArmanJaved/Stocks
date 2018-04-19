@@ -114,7 +114,6 @@
 
                 <TextView
                     android:layout_marginTop="1dp"
-                    android:layout_gravity="end"
                     android:text="45.0"
                     android:textColor="#607d8b"
                     android:id="@+id/asp_Rate"

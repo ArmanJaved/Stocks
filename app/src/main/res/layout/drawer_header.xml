@@ -35,7 +35,6 @@
 
     <LinearLayout
         android:layout_marginTop="40dp"
-        android:paddingLeft="20dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -53,6 +52,7 @@
 
         <TextView
 
+            android:layout_marginTop="8dp"
             android:text="Settings"
             android:id="@+id/Settings"
             android:layout_width="wrap_content"
@@ -62,7 +62,7 @@
             android:textStyle="normal"/>
 
         <TextView
-
+            android:layout_marginTop="8dp"
             android:text="Help"
             android:id="@+id/help"
             android:layout_width="wrap_content"
@@ -71,8 +71,8 @@
             android:textSize="20sp"
             android:textStyle="normal"/>
         <TextView
-
-            android:text="Terms/ Privacy"
+            android:layout_marginTop="8dp"
+            android:text="Terms/Privacy"
             android:id="@+id/terms_priv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -82,8 +82,9 @@
 
 
         <TextView
-
-            android:text="Top Gainers"
+            android:visibility="gone"
+            android:layout_marginTop="8dp"
+            android:text="Gainers/ Losers"
             android:id="@+id/top_gainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -91,30 +92,22 @@
             android:textSize="20sp"
             android:textStyle="normal"/>
 
-        <TextView
 
-            android:text="Top Losers"
-            android:id="@+id/top_losers"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#fff"
-            android:textSize="20sp"
-            android:textStyle="normal"/>
     </LinearLayout>
 
 
 
 
     <Button
-        android:layout_marginLeft="15dp"
         android:textSize="16sp"
         android:textStyle="normal"
         android:textColor="#fff"
-        android:text="Donate"
+        android:text="Invite Friends"
         android:textAllCaps="false"
         android:id="@+id/resend"
+        android:layout_gravity="center"
         android:background = "@drawable/roundedbutton"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="130dp"
         android:layout_width="130dp"
         android:layout_height="wrap_content" />
 

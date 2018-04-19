@@ -13,137 +13,64 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <Button
-            android:layout_marginTop="10dp"
-            android:id="@+id/watch_list"
-            android:layout_width="250dp"
-            android:layout_height="40dp"
-            android:text="Top Gainers"
-            android:textColor="#607d8b"
-            android:textAllCaps="false"
-            android:layout_gravity="center"
-            android:background="@drawable/my_button_bg" />
-
-
         <LinearLayout
-            android:visibility="gone"
-            android:layout_marginTop="10dp"
             android:background="#607d8b"
             android:orientation="horizontal"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+           <LinearLayout
+               android:layout_weight="1"
+               android:orientation="vertical"
+               android:layout_width="wrap_content"
+               android:id="@+id/btngainers"
+               android:background="@drawable/border_set2"
+               android:layout_height="wrap_content">
+
+               <TextView
+                   android:textAlignment="center"
+                   android:textStyle="italic|normal"
+                   android:textSize="18dp"
+                   android:text="Top Gainers"
+                   android:layout_margin="10dp"
+                   android:textColor="#fff"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content" />
+           </LinearLayout>
+
+
 
             <LinearLayout
-                android:padding="10dp"
+                android:id="@+id/btnlosers"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:layout_width="150dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/asp_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ticker"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:layout_marginTop="0dp"
-                    android:textColor="#fff" />
-
-
-                <TextView
-                    android:textStyle="bold"
-                    android:textSize="30sp"
-                    android:id="@+id/mentions"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:text="4"
-                    android:visibility="gone"
-                    android:textColor="#ca3232" />
-
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:id="@+id/usage"
-                android:padding="10dp"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content">
-
-                <TextView
-
-                    android:id="@+id/positive"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:visibility="gone"
-                    android:textColor="@android:color/black"
-                    android:textAppearance="?android:attr/textAppearanceButton"
-                    android:textStyle="normal" />
-                <TextView
-                    android:id="@+id/negative"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Change"
-                    android:textAllCaps="false"
+                    android:textAlignment="center"
+                    android:textStyle="italic|normal"
+                    android:textSize="18dp"
+                    android:text="Top Losers"
+                    android:layout_margin="10dp"
                     android:textColor="#fff"
-                    android:textAppearance="?android:attr/textAppearanceButton"
-                    android:textStyle="normal" />
-                <TextView
-                    android:id="@+id/netural"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Volume"
-                    android:textAllCaps="false"
-                    android:textColor="#fff"
-                    android:textAppearance="?android:attr/textAppearanceButton"
-                    android:textStyle="normal" />
-
-
-                <TextView
-                    android:visibility="gone"
-                    android:id="@+id/status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="23"
-                    android:textColor="#ca3232"
-                    android:textAppearance="?android:attr/textAppearanceButton"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:id="@+id/third"
-                android:padding="10dp"
-                android:layout_weight=".1"
-                android:orientation="vertical"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_marginTop="1dp"
-                    android:layout_gravity="end"
-                    android:text="Company"
-                    android:textColor="#fff"
-                    android:id="@+id/asp_Rate"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-
             </LinearLayout>
 
         </LinearLayout>
 
+
         <ListView
-            android:layout_marginTop="20dp"
+            android:background="#fff"
             android:id="@+id/list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+        <ListView
+            android:background="#fff"
+            android:id="@+id/list1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             />

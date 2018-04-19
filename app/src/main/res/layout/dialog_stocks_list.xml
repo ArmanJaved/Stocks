@@ -19,7 +19,7 @@
             android:hint="Search ticker"
             android:drawableRight="@android:drawable/ic_menu_search"
             android:layout_margin="10dp"
-            android:textColor="#fff"
+            android:textColor="#607d8b"
             android:textStyle="normal"
             android:backgroundTint="#607d8b"
             android:textColorHint="#607d8b"

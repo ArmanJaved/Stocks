@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
-        android:background="#f0f0f0"
+        android:background="#ffffff"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -107,7 +107,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#f0f0f0"/>
+            android:background="#ffffff"/>
 
 
 
@@ -128,8 +128,20 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+
+                <Spinner
+                    android:layout_gravity="end"
+                    android:gravity="end"
+                    android:padding="0dip"
+                    style="@style/Widget.AppCompat.Spinner.Underlined"
+                    android:id="@+id/spinnerchart"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:dropDownWidth="wrap_content"
+                    android:spinnerMode="dropdown" />
                 <Button
 
+                    android:visibility="gone"
                     android:id="@+id/topgainers"
                     android:layout_marginTop="10dp"
                     android:layout_width="250dp"
@@ -162,6 +174,38 @@
                     android:dividerHeight="0dp"
                     android:layout_width="match_parent"
                     android:id="@+id/loserlist"
+                    android:layout_height="match_parent">
+
+                </android.support.v7.widget.RecyclerView>
+
+                <android.support.v7.widget.RecyclerView
+
+                    android:visibility="gone"
+                    android:divider="@null"
+                    android:dividerHeight="0dp"
+                    android:layout_width="match_parent"
+                    android:id="@+id/multipletop"
+                    android:layout_height="match_parent">
+
+                </android.support.v7.widget.RecyclerView>
+
+                <android.support.v7.widget.RecyclerView
+
+                    android:visibility="gone"
+                    android:divider="@null"
+                    android:dividerHeight="0dp"
+                    android:layout_width="match_parent"
+                    android:id="@+id/multiplebottom"
+                    android:layout_height="match_parent">
+
+                </android.support.v7.widget.RecyclerView>
+                <android.support.v7.widget.RecyclerView
+
+                    android:visibility="gone"
+                    android:divider="@null"
+                    android:dividerHeight="0dp"
+                    android:layout_width="match_parent"
+                    android:id="@+id/consolidation"
                     android:layout_height="match_parent">
 
                 </android.support.v7.widget.RecyclerView>
@@ -207,6 +251,7 @@
 
                             <Button
 
+                                android:visibility="gone"
                                 android:layout_marginBottom="5dp"
                                 android:layout_marginTop="10dp"
                                 android:id="@+id/toplosers"

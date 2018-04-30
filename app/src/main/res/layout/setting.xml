@@ -65,18 +65,8 @@
                 android:theme="@style/SCBSwitch" />
 
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:paddingTop="20dp"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-
             <android.support.v7.widget.SwitchCompat
+                android:paddingTop="20dp"
                 android:layout_width="match_parent"
                 android:id="@+id/mini"
                 android:textColor="#545454"
@@ -89,113 +79,25 @@
                 android:checked="false"
                 android:theme="@style/SCBSwitch" />
 
-
+            <android.support.v7.widget.SwitchCompat
+                android:paddingTop="20dp"
+                android:layout_width="match_parent"
+                android:id="@+id/push"
+                android:textColor="#545454"
+                android:textStyle="normal"
+                android:textSize="20sp"
+                android:layout_weight="1"
+                android:text="Push Notifications"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:checked="false"
+                android:theme="@style/SCBSwitch" />
         </LinearLayout>
 
 
 
 
-        <ScrollView
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <!-- Label -->
-                    <TextView
-                        android:text="@string/employee_name"
-                        style="@style/CategoryStyle" />
-
-                    <!-- Input fields -->
-                    <LinearLayout
-                        android:layout_height="wrap_content"
-                        android:layout_width="0dp"
-                        android:layout_weight="2"
-                        android:paddingLeft="4dp"
-                        android:orientation="vertical">
-
-                        <!-- Name field -->
-                        <EditText
-                            android:id="@+id/edit_employee_firstname"
-                            android:hint="@string/hint_employee_firstname"
-                            android:inputType="textCapWords"
-                            style="@style/EditorFieldStyle" />
-
-                        <!-- Breed field -->
-                        <EditText
-                            android:id="@+id/edit_employee_lastname"
-                            android:hint="@string/hint_employee_lastname"
-                            android:inputType="textCapWords"
-                            style="@style/EditorFieldStyle" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- Title category -->
-                <LinearLayout
-                    android:id="@+id/employeeTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:text="@string/category_title"
-                        style="@style/CategoryStyle" />
-
-                    <LinearLayout
-                        android:layout_height="wrap_content"
-                        android:layout_width="0dp"
-                        android:layout_weight="2"
-                        android:paddingLeft="4dp"
-                        android:orientation="vertical">
-
-                        <!-- Name field -->
-                        <EditText
-                            android:id="@+id/edit_employee_title"
-                            android:hint="@string/hint_employee_title"
-                            android:inputType="textCapWords"
-                            style="@style/EditorFieldStyle" />
-
-                    </LinearLayout>
-
-
-                </LinearLayout>
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:onClick="saveView"
-                    android:text="Save to View"/>
-
-                <TextView
-                    android:id="@+id/empFirst"
-                    android:layout_width="wrap_content"
-                    android:padding="10dp"
-                    android:layout_height="wrap_content"
-                    android:text=""/>
-                <TextView
-                    android:id="@+id/empLast"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:text=""/>
-                <TextView
-                    android:id="@+id/empTitle"
-                    android:layout_width="wrap_content"
-                    android:padding="10dp"
-                    android:layout_height="wrap_content"
-                    android:text=""/>
-
-            </LinearLayout>
-
-        </ScrollView>
 
     </LinearLayout>
 

@@ -1,4 +1,4 @@
-package stocksymbolapp;
+package com.stocksymbolapp;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -6,9 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -30,7 +28,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -39,7 +36,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mindorks.placeholderview.PlaceHolderView;
-import com.stocksymbolapp.R;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -56,6 +52,7 @@ public class WatchlistActivity extends AppCompatActivity {
     DatabaseReference artistreference;
     FirebaseAuth auth;
     ListView listViewartists;
+    ListView listindices;
     List<Watch> resaurantsList;
     SpotsDialog dialog ;
 
@@ -68,8 +65,11 @@ public class WatchlistActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private PlaceHolderView mGalleryView;
     Dialog d;
-    List<String> stocklist = new ArrayList<>();
 
+
+    public static final String INDICES = "INDICES";
+    String [] indiceslists = {"SPY", "DOW", "NASD"};
+    List<String> stocklist = new ArrayList<>();
 
 
     @Override
@@ -78,6 +78,26 @@ public class WatchlistActivity extends AppCompatActivity {
         setContentView(R.layout.watchlist);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        SharedPreferences prefs = getSharedPreferences(INDICES, MODE_PRIVATE);
+        String mini_variable = prefs.getString("indicestatus", "");
+
+        TextView textViewind = (TextView)findViewById(R.id.textindices);
+        listindices = (ListView)findViewById(R.id.indices);
+
+        if (mini_variable.equals("on")) {
+            Indices adaptor = null;
+            adaptor = new Indices(WatchlistActivity.this, indiceslists);
+            listindices.setAdapter(adaptor);
+            listindices.setVisibility(View.VISIBLE);
+            textViewind.setVisibility(View.VISIBLE);
+        }
+        else {
+
+            listindices.setVisibility(View.GONE);
+            textViewind.setVisibility(View.GONE);
+        }
+
 
 
         dialog = new SpotsDialog(this);
@@ -356,7 +376,6 @@ public class WatchlistActivity extends AppCompatActivity {
                                 Intent intent = new Intent(WatchlistActivity.this, MainActivity.class);
                                 intent.putExtra("symbol", symbol);
                                 startActivity(intent);
-                                WatchlistActivity.this.finish();
 
 
                             }

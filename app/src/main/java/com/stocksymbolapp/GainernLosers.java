@@ -1,11 +1,11 @@
-package stocksymbolapp;
+package com.stocksymbolapp;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,19 +15,18 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,7 +34,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mindorks.placeholderview.PlaceHolderView;
-import com.stocksymbolapp.R;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -62,15 +60,34 @@ public class GainernLosers extends AppCompatActivity  {
 
     public static final String CheckLogin = "ChkLogin";
     private GainerRecycleradapter recyclergaineradapter;
-
     private LosersRecycleradapter recyclerloseradapter;
+    private MultipleTopRecycleradapter multipleTopRecycleradapter;
+    private MultipleBottomRecycleradapter multipleBottomRecycleradapter;
+    private ConsolidationRecycleradapter consolidationRecycleradapter;
 
     RecyclerView recyclerViewgainer;
     RecyclerView recyclerViewlosers;
+    RecyclerView recyclerViewmultipletop;
+    RecyclerView recyclerViewmultiplebottom;
+    RecyclerView recyclerViewconsolidation;
+
+    String colors[] = {"Top Gainers","Top Losers", "Multiple Top", "Multiple Bottom", "Consolidation"};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gainernlosermain);
+
+
+
+        // Selection of the spinner
+        final Spinner spinner = (Spinner) findViewById(R.id.spinnerchart);
+
+        // Application of the Array to the Spinner
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_dropdown_item, colors);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinner.setAdapter(spinnerArrayAdapter);
+
 
 
 
@@ -85,6 +102,21 @@ public class GainernLosers extends AppCompatActivity  {
         recyclerViewlosers = (RecyclerView) findViewById(R.id.loserlist);
         horizontalLayoutManagaer = new LinearLayoutManager(GainernLosers.this, LinearLayoutManager.VERTICAL, false);
         recyclerViewlosers.setLayoutManager(horizontalLayoutManagaer);
+
+        recyclerViewmultipletop = (RecyclerView)findViewById(R.id.multipletop);
+        horizontalLayoutManagaer = new LinearLayoutManager(GainernLosers.this, LinearLayoutManager.VERTICAL, false);
+        recyclerViewmultipletop.setLayoutManager(horizontalLayoutManagaer);
+
+
+        recyclerViewmultiplebottom = (RecyclerView)findViewById(R.id.multiplebottom);
+        horizontalLayoutManagaer = new LinearLayoutManager(GainernLosers.this, LinearLayoutManager.VERTICAL, false);
+        recyclerViewmultiplebottom.setLayoutManager(horizontalLayoutManagaer);
+
+
+        recyclerViewconsolidation = (RecyclerView)findViewById(R.id.consolidation);
+        horizontalLayoutManagaer = new LinearLayoutManager(GainernLosers.this, LinearLayoutManager.VERTICAL, false);
+        recyclerViewconsolidation.setLayoutManager(horizontalLayoutManagaer);
+
 
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -156,31 +188,93 @@ public class GainernLosers extends AppCompatActivity  {
         final Button topgain = (Button)findViewById(R.id.topgainers);
         final Button toplos = (Button)findViewById(R.id.toplosers) ;
 
-        toplos.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+//        toplos.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                String text=toplos.getText().toString();
+//                if (text.toLowerCase().contains("losers"))
+//                {
+//                    topgain.setText("Top Losers");
+//                    toplos.setText("Top Gainers");
+//
+//                }
+//                else if (text.toLowerCase().contains("gainers")){
+//                    topgain.setText("Top Gainers");
+//                    toplos.setText("Top Losers");
+//
+//                }
+//
+//
+//
+//            }
+//        });
 
-                String text=toplos.getText().toString();
-                if (text.toLowerCase().contains("losers"))
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+
+
+                if (position==0)
                 {
-                    topgain.setText("Top Losers");
-                    toplos.setText("Top Gainers");
-                    recyclerViewlosers.setVisibility(View.VISIBLE);
-                    recyclerViewgainer.setVisibility(View.GONE);
-                }
-                else if (text.toLowerCase().contains("gainers")){
-                    topgain.setText("Top Gainers");
-                    toplos.setText("Top Losers");
                     recyclerViewlosers.setVisibility(View.GONE);
                     recyclerViewgainer.setVisibility(View.VISIBLE);
+                    recyclerViewmultipletop.setVisibility(View.GONE);
+                    recyclerViewmultiplebottom.setVisibility(View.GONE);
+                    recyclerViewconsolidation.setVisibility(View.GONE);
+
+                }
+                else if (position ==1)
+                {
+
+                    recyclerViewlosers.setVisibility(View.VISIBLE);
+                    recyclerViewgainer.setVisibility(View.GONE);
+                    recyclerViewmultipletop.setVisibility(View.GONE);
+                    recyclerViewmultiplebottom.setVisibility(View.GONE);
+                    recyclerViewconsolidation.setVisibility(View.GONE);
+                }
+                if (position==2)
+                {
+                    recyclerViewlosers.setVisibility(View.GONE);
+                    recyclerViewgainer.setVisibility(View.GONE);
+                    recyclerViewmultipletop.setVisibility(View.VISIBLE);
+                    recyclerViewmultiplebottom.setVisibility(View.GONE);
+                    recyclerViewconsolidation.setVisibility(View.GONE);
                 }
 
+                if (position==3)
+                {
+                    recyclerViewlosers.setVisibility(View.GONE);
+                    recyclerViewgainer.setVisibility(View.GONE);
+                    recyclerViewmultipletop.setVisibility(View.GONE);
+                    recyclerViewmultiplebottom.setVisibility(View.VISIBLE);
+                    recyclerViewconsolidation.setVisibility(View.GONE);
+                }
+
+                if (position==4)
+                {
+                    recyclerViewlosers.setVisibility(View.GONE);
+                    recyclerViewgainer.setVisibility(View.GONE);
+                    recyclerViewmultipletop.setVisibility(View.GONE);
+                    recyclerViewmultiplebottom.setVisibility(View.GONE);
+                    recyclerViewconsolidation.setVisibility(View.VISIBLE);
+                }
 
 
             }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
         });
         gainers();
         losers();
+        Multipletop();
+        Multiplebottom();
+        Consolidation();
 
 
     }
@@ -325,7 +419,6 @@ public class GainernLosers extends AppCompatActivity  {
         Intent intent = new Intent(GainernLosers.this, MainActivity.class);
         intent.putExtra("symbol", mystock);
         startActivity(intent);
-        GainernLosers.this.finish();
 
 
     }
@@ -407,6 +500,138 @@ public class GainernLosers extends AppCompatActivity  {
             }
         });
     }
+
+    public void Multipletop()
+    {
+
+        final List<String> resaurantsList;
+        resaurantsList = new ArrayList<>();
+
+        DatabaseReference artistreference = FirebaseDatabase.getInstance().getReference("Multipletop");
+        artistreference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+
+
+                resaurantsList.clear();
+                resaurantsList.size();
+
+
+                for (DataSnapshot artistsnapshot: dataSnapshot.getChildren())
+                {
+
+                    String key = artistsnapshot.getKey();
+                    String value = String.valueOf(artistsnapshot.getValue());
+                    resaurantsList.add(value);
+                }
+
+
+                multipleTopRecycleradapter = new MultipleTopRecycleradapter(GainernLosers.this, resaurantsList);
+                recyclerViewmultipletop.setAdapter(multipleTopRecycleradapter);
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    public void Multiplebottom()
+    {
+
+        final List<String> resaurantsList;
+        resaurantsList = new ArrayList<>();
+
+        DatabaseReference artistreference = FirebaseDatabase.getInstance().getReference("Multiplebottom");
+        artistreference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+
+
+                resaurantsList.clear();
+                resaurantsList.size();
+
+
+                for (DataSnapshot artistsnapshot: dataSnapshot.getChildren())
+                {
+
+                    String key = artistsnapshot.getKey();
+                    String value = String.valueOf(artistsnapshot.getValue());
+                    resaurantsList.add(value);
+                }
+
+
+                multipleBottomRecycleradapter = new MultipleBottomRecycleradapter(GainernLosers.this, resaurantsList);
+                recyclerViewmultiplebottom.setAdapter(multipleBottomRecycleradapter);
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void Consolidation()
+    {
+
+        final List<String> resaurantsList;
+        resaurantsList = new ArrayList<>();
+
+        DatabaseReference artistreference = FirebaseDatabase.getInstance().getReference("Consolidation");
+        artistreference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+
+
+                resaurantsList.clear();
+                resaurantsList.size();
+
+
+                for (DataSnapshot artistsnapshot: dataSnapshot.getChildren())
+                {
+
+                    String key = artistsnapshot.getKey();
+                    String value = String.valueOf(artistsnapshot.getValue());
+                    resaurantsList.add(value);
+                }
+
+
+                consolidationRecycleradapter = new ConsolidationRecycleradapter(GainernLosers.this, resaurantsList);
+                recyclerViewconsolidation.setAdapter(consolidationRecycleradapter);
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Unregister the adapter.
+        // Because the RecyclerView won't unregister the adapter, the
+        // ViewHolders are very likely leaked.
+        recyclerViewgainer.setAdapter(null);
+        recyclerViewlosers.setAdapter(null);
+        recyclerViewmultipletop.setAdapter(null);
+        recyclerViewmultiplebottom.setAdapter(null);
+        recyclerViewconsolidation.setAdapter(null);
+
+    }
+
+
 
 
 

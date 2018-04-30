@@ -3,8 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/colorPrimary"
-    android:paddingLeft="30dp">
+    android:background="@color/colorPrimary">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:paddingLeft="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
 
     <LinearLayout
         android:layout_marginTop="40dp"
@@ -47,37 +54,48 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#fff"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="normal"/>
 
         <TextView
 
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="15dp"
             android:text="Settings"
             android:id="@+id/Settings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#fff"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="normal"/>
 
         <TextView
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="15dp"
             android:text="Help"
             android:id="@+id/help"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#fff"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="normal"/>
         <TextView
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="15dp"
             android:text="Terms/Privacy"
             android:id="@+id/terms_priv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#fff"
-            android:textSize="20sp"
+            android:textSize="16sp"
+            android:textStyle="normal"/>
+
+        <TextView
+
+            android:layout_marginTop="15dp"
+            android:text="Contact"
+            android:id="@+id/contact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#fff"
+            android:textSize="16sp"
             android:textStyle="normal"/>
 
 
@@ -89,27 +107,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#fff"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="normal"/>
 
 
     </LinearLayout>
 
 
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
 
     <Button
+        android:layout_marginBottom="10dp"
         android:textSize="16sp"
         android:textStyle="normal"
+        android:layout_alignParentBottom="true"
         android:textColor="#fff"
         android:text="Invite Friends"
         android:textAllCaps="false"
-        android:id="@+id/resend"
-        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/invitefriend"
         android:background = "@drawable/roundedbutton"
-        android:layout_marginTop="130dp"
         android:layout_width="130dp"
         android:layout_height="wrap_content" />
+    </RelativeLayout>
 
 
 </LinearLayout>

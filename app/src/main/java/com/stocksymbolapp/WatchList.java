@@ -1,4 +1,4 @@
-package stocksymbolapp;
+package com.stocksymbolapp;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -14,7 +14,6 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -22,9 +21,8 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.github.mikephil.charting.charts.CandleStickChart;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -36,24 +34,13 @@ import com.github.mikephil.charting.data.CandleEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
-import com.stocksymbolapp.R;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -61,7 +48,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
-import static stocksymbolapp.Setting.MINI;
 
 /**
  * Created by BrainPlow on 8/25/2017.
@@ -98,7 +84,6 @@ public class WatchList extends ArrayAdapter<Watch> {
         TextView date = (TextView)listviewitem.findViewById(R.id.Textartistname1);
 
         final LineChart mChart = (LineChart) listviewitem.findViewById(R.id.asdlinechart);
-
         mChart.setNoDataText("");
 
         final Watch resaurants = resaurantsList.get(position);
@@ -127,10 +112,8 @@ public class WatchList extends ArrayAdapter<Watch> {
         if (mini_variable.equals("on"))
         {
 
-            mChart.setNoDataText("loading");
 
-
-            String url = "https://api.iextrading.com/1.0/stock/"+symbol+"/chart/3m";
+            String url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+symbol+"&interval=1min&apikey=U3BSFX821P0F5N5W";
             final ArrayList<String> xVals = new ArrayList<String>();
             final ArrayList<Entry> yVals = new ArrayList<Entry>();
 
@@ -142,76 +125,96 @@ public class WatchList extends ArrayAdapter<Watch> {
                         @Override
                         public void onResponse(String response) {
 
-                            JSONArray json = null;
-
-                            try {
-                                int i = 0;
-                                json = new JSONArray(response);
-                                for (int j = 0; j < json.length(); j++) {
-                                    HashMap<String, String> map = new HashMap<String, String>();
-                                    JSONObject e = json.getJSONObject(j);
-
-
-                                    String close = e.getString("close");
-                                    String time = e.getString("date");
-
-                                    String [] split = time.split("-");
 
 
 
 
-                                    xVals.add(split[2]);
-                                    yVals.add(new Entry(i, Float.valueOf(close)));
 
 
 
-                                    i++;
-                                }
+
+                                final ArrayList<Entry> yVals = new ArrayList<Entry>();
+                                String open = "";
+                                String close = "";
 
 
-                                mChart.setVisibility(View.VISIBLE);
+                                try {
+                                    int i = 0;
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    JSONObject jsonChildObject = null;
 
-                                LineDataSet set1;
-
-                                // create a dataset and give it a type
-                                set1 = new LineDataSet(yVals, "DataSet 1");
-                                set1.setDrawCircles(false);
-                                set1.setDrawValues(false);
-
-                                if (check> 0 ) {
-                                    set1.setColor(Color.parseColor("#63bd55"));
-                                }
-                                else {
-                                    set1.setColor(Color.parseColor("#E74C3C"));
-                                }
-                                set1.setAxisDependency(YAxis.AxisDependency.RIGHT);
-
-                                ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
-                                dataSets.add(set1); // add the datasets
+                                    jsonChildObject = (JSONObject)jsonObject.get("Time Series (1min)");
 
 
+                                    int length = jsonChildObject.length();
 
-                                LineData data = new LineData();
-                                data.addDataSet(set1);
+                                    colors = null;
+                                    colors = new int[length];
+                                    String key = null;
 
-                                mChart.invalidate();
+                                    JSONArray objnames = jsonChildObject.names();
+                                    for(int j = objnames.length()-1; j > 0; j--) {
+                                        key = objnames.getString(j);
 
-                                mChart.setDescription(null);
-                                mChart.setNoDataText("loading");
 
-                                // enable touch gestures
-                                mChart.setTouchEnabled(false);
-                                mChart.setDrawGridBackground(false);
-                                mChart.getLegend().setEnabled(false);
+                                        open = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("1. open"));
+                                        close = String.valueOf(((JSONObject) jsonChildObject.get(key)).get("4. close"));
 
-                                mChart.getAxisRight().setEnabled(false);
-                                mChart.getAxisLeft().setEnabled(false);
-                                mChart.invalidate();
-                                mChart.getXAxis().setEnabled(false);
-                                mChart.setData(data);
-                                mChart.invalidate();
+                                        yVals.add(new Entry(i, Float.valueOf(close)));
 
-                            }catch (Exception e)
+                                        if (Float.valueOf(close) >= Float.valueOf(open)) {
+                                            colors[i] = Color.parseColor("#1D8348");
+                                        }
+                                        else {
+                                            colors[i] = Color.parseColor("#E74C3C");
+                                        }
+
+                                        i++;
+                                    }
+
+
+
+                                    LineDataSet set1;
+
+                                    // create a dataset and give it a type
+                                    set1 = new LineDataSet(yVals, "DataSet 1");
+                                    set1.setDrawCircles(false);
+                                    set1.setDrawValues(false);
+
+                                    if (check> 0 ) {
+                                        set1.setColor(Color.parseColor("#63bd55"));
+                                    }
+                                    else {
+                                        set1.setColor(Color.parseColor("#E74C3C"));
+                                    }
+                                    set1.setAxisDependency(YAxis.AxisDependency.RIGHT);
+
+                                    ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+                                    dataSets.add(set1); // add the datasets
+
+
+
+                                    LineData data = new LineData();
+                                    data.addDataSet(set1);
+
+                                    mChart.invalidate();
+
+                                    mChart.setDescription(null);
+
+                                    // enable touch gestures
+                                    mChart.setTouchEnabled(false);
+                                    mChart.setDrawGridBackground(false);
+                                    mChart.getLegend().setEnabled(false);
+
+                                    mChart.getAxisRight().setEnabled(false);
+                                    mChart.getAxisLeft().setEnabled(false);
+                                    mChart.invalidate();
+                                    mChart.getXAxis().setEnabled(false);
+                                    mChart.setData(data);
+                                    mChart.invalidate();
+
+
+                                }catch (Exception e)
                             {}
                         }
                     },
@@ -258,10 +261,7 @@ public class WatchList extends ArrayAdapter<Watch> {
 
     }
 
-    private void setupchart(){
 
-
-    }
 
 
 

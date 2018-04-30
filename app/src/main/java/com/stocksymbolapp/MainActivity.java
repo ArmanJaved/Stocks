@@ -1,4 +1,4 @@
-package stocksymbolapp;
+package com.stocksymbolapp;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -11,7 +11,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +31,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -48,9 +49,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.CandleStickChart;
-import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -63,24 +62,17 @@ import com.github.mikephil.charting.data.CandleEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 import com.mindorks.placeholderview.PlaceHolderView;
-import com.stocksymbolapp.R;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -89,17 +81,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
-import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -127,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
     List<BarEntry> entries1 = new ArrayList<>();
     CandleDataSet dataset;
 
+    public static int  pagenumber =0;
     int stocksymindex;
 
     public String URLTime;
@@ -136,6 +127,8 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
     String [] stockdatasplit;
 
     TextView start_D, end_D;
+
+    String finalweekdata;
     public LineChart mChart;
     String Stock_N;
     DataPoint[] dataPoints;
@@ -204,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
     ListView listViewfun;
 
 
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,6 +207,20 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
 
         listViewfun = (ListView)findViewById(R.id.list);
 
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                String shareBody = "Check out the great new stock market charting app! It has so many great features! http://splashcharts.com/download";
+                String sharesub = "Stock App";
+                intent.putExtra(Intent.EXTRA_SUBJECT, sharesub);
+                intent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                startActivity(Intent.createChooser(intent, "Invite friends via..."));
+            }
+        });
 
 
         firstName = (EditText) findViewById(R.id.edit_employee_firstname);
@@ -249,7 +257,22 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
 
 //        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 //        Previous_Working_day = sdf.format(lastDateOfPreviousWeek);
+
         getSupportActionBar().hide();
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+//        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+//        mToolbar.setTitle(getString(R.string.app_name));
+//        mToolbar.setNavigationIcon(R.drawable.backbutton);
+
+        ImageView backbtn = (ImageView)findViewById(R.id.backbutton);
+        backbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         startService(new Intent(this, LinkService.class));
         simpleList = (ListView)findViewById(R.id.simpleListView);
@@ -441,11 +464,6 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
 //        setSupportActionBar(toolbar);
 
 
-        mDrawer = (DrawerLayout)findViewById(R.id.drawerLayout);
-        mDrawerView = (PlaceHolderView)findViewById(R.id.drawerView);
-        mToolbar = (Toolbar)findViewById(R.id.toolbar);
-        mGalleryView = (PlaceHolderView)findViewById(R.id.galleryView);
-        setupDrawer();
 
 
         candleStickChart = (CandleStickChart) findViewById(R.id.chart);
@@ -456,42 +474,7 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
 
         mChart = (LineChart) findViewById(R.id.asdlinechart);
 
-        // Get reference of widgets from XML layout
-        final Spinner spinner = (Spinner) findViewById(R.id.line);
 
-        // Initializing a String Array
-        String[] plants = new String[]{
-                "Candle Chart",
-                "Line Chart",
-        };
-
-        final List<String> plantsList = new ArrayList<>(Arrays.asList(plants));
-
-        // Initializing an ArrayAdapter
-        final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
-                this,R.layout.spinner_item,plantsList){
-            @Override
-            public boolean isEnabled(int position){
-
-                return true;
-
-            }
-            @Override
-            public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view;
-//                if(position == ){
-//                    // Set the hint text color gray
-//                    tv.setTextColor(Color.GRAY);
-//
-//                }
-//                else {
-//                    tv.setTextColor(Color.BLACK);
-//                }
-                return view;
-            }
-        };
 
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -534,11 +517,13 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
                         if(charSequence.toString().trim().length() > 0) {
                             stocklist.clear();
                             loadstockdialog(charSequence.toString().trim(), true);
+                            Foundamentals();
 
                         }
                         else{
                             stocklist.clear();
                             loadstockdialog("", false);
+                            Foundamentals();
                         }
                     }
 
@@ -778,32 +763,7 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
         }
     }
 
-    private void setupDrawer(){
-        mDrawerView
-                .addView(new DrawerHeader(this.getApplicationContext()))
-                .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_PROFILE))
-                .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_REQUESTS))
-                .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_MESSAGE))
-                .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_GROUPS))
-                .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_NOTIFICATIONS))
-                .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_TERMS))
-                .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_SETTINGS))
-                .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_LOGOUT));
 
-        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, mDrawer, mToolbar, R.string.open_drawer, R.string.close_drawer){
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-            }
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-            }
-        };
-
-        mDrawer.addDrawerListener(drawerToggle);
-        drawerToggle.syncState();
-    }
 
 
     public String getMonth(int month) {
@@ -890,14 +850,14 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
 
         if (signal_api_call=='M')
         {
-            url = "https://api.iextrading.com/1.0/stock/"+stockname+"/chart/3m";
-            volleycallmethodapi(url);
+            url = "https://api.intrinio.com/prices?identifier="+stockname+"&frequency=daily";
+            WeeklyYearlyAPi(url);
 
         }
         else if (signal_api_call=='Y')
         {
-            url ="https://api.iextrading.com/1.0/stock/"+stockname+"/chart/1y";
-            volleycallmethodapi(url);
+            url ="https://api.intrinio.com/prices?identifier="+stockname+"&frequency=daily";
+            WeeklyYearlyAPi(url);
         }
 
         else if (signal_api_call=='Z')
@@ -1002,20 +962,28 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
                         entries.clear();
                         entries1.clear();
                         labelsforvolume.clear();
-                        // response
-                        Log.d("Response", response);
 
+                        String datawee = null;
                         try {
                             JSONArray contacts = null;
                             JSONObject object = null;
                             object = new JSONObject(response);
                             contacts = object.getJSONArray("data");
                             int s = contacts.length();
-                            String asd = String.valueOf(contacts);
-                            Weekly_yearly_parseJsonData(asd);
+                            datawee = String.valueOf(contacts);
+                            Weekly_yearly_parseJsonData(datawee);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        pagenumber++;
+
+
+
+
+                        // response
+                        Log.d("Response", response);
+
+
 
                     }
                 },
@@ -1107,7 +1075,7 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
     public void GetPercentage(String stockname) {
 
 
-        String url = "https://api.iextrading.com/1.0/stock/"+stockname+"/chart";
+        String url = "https://api.intrinio.com/prices?identifier="+stockname+"&frequency=daily";
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest postRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>()
@@ -1116,7 +1084,20 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
                     public void onResponse(String response) {
 
 
-                        CalculatePercentage(response);
+
+
+                        try {
+                            JSONArray contacts = null;
+                            JSONObject object = null;
+                            object = new JSONObject(response);
+                            contacts = object.getJSONArray("data");
+                            int s = contacts.length();
+                            String asd = String.valueOf(contacts);
+                            CalculatePercentage(asd);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
 
                     }
                 },
@@ -1132,11 +1113,33 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
 
         ) {
 
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<String, String>();
+                String creds = String.format("%s:%s","788e3c656c0e4e0b579cad93b9efd853","c1c2a2c03556ee69689e4ac572892d53");
+                String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.NO_WRAP);
+                params.put("Authorization", auth);
+                return params;
+            }
+
         };
 
-        postRequest.setRetryPolicy(new DefaultRetryPolicy
-                (DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2,
-                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        postRequest.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 50000;
+            }
+
+            @Override
+            public int getCurrentRetryCount() {
+                return 50000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+
+            }
+        });
         queue.add(postRequest);
 
     }
@@ -1161,19 +1164,17 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
             json = new JSONArray(jsonString);
 
             int length = json.length();
-            int currclo = length-1;
-            int yest_cl = length-2;
-            for (int j = json.length()-1; j >json.length()-3 ; j--) {
+            for (int j = 0; j <3 ; j++) {
                 HashMap<String, String> map = new HashMap<String, String>();
                 JSONObject e = json.getJSONObject(j);
 
                 String clos = e.getString("close");
 
-                if (j ==currclo )
+                if (j ==0 )
                 {
                     current_close = clos;
                 }
-                if (j ==yest_cl)
+                if (j ==1 )
                 {
                     yesterday_close = clos;
                 }
@@ -1220,11 +1221,17 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
             json = new JSONArray(jsonString);
 
             int length = json.length();
+            Date c = Calendar.getInstance().getTime();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            String currentdate = df.format(c);
+            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
             colors = null;
             colors = new int[length];
+            Date d1;
+            Date d2;
             xVals.clear();
             yVals.clear();
-            for(int j=json.length()-1;j>0;j--) {
+            for(int j=json.length()-1;j>=0;j--) {
                 HashMap<String, String> map = new HashMap<String, String>();
                 JSONObject e = json.getJSONObject(j);
 
@@ -1238,21 +1245,52 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
                 String [] split = time.split("-");
 
 
-                xVals.add(split[1]);
-                yVals.add(new Entry(i, Float.valueOf(close)));
-                labels.add("abc");
-                entries1.add(new BarEntry(i, Float.valueOf(vol)));
-                labelsforvolume.add(Float.valueOf(vol));
-                Xaxis_value.add(time);
 
-                if (Float.valueOf(close) >= Float.valueOf(open)) {
-                    colors[i] = Color.parseColor("#1D8348");
-                } else {
-                    colors[i] = Color.parseColor("#E74C3C");
+
+
+
+                 d1 = f.parse(time);
+                 d2 = f.parse(currentdate);
+                int n = differenceInMonths(d1, d2);
+                if (n<3 && signal_api_call=='M') {
+
+
+                    xVals.add(split[1]);
+                    yVals.add(new Entry(i, Float.valueOf(close)));
+                    labels.add("abc");
+                    entries1.add(new BarEntry(i, Float.valueOf(vol)));
+                    labelsforvolume.add(Float.valueOf(vol));
+                    Xaxis_value.add(time);
+
+                    if (Float.valueOf(close) >= Float.valueOf(open)) {
+                        colors[i] = Color.parseColor("#1D8348");
+                    } else {
+                        colors[i] = Color.parseColor("#E74C3C");
+                    }
+
+                    entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
+                    i++;
                 }
+                else if (signal_api_call=='Z' || signal_api_call =='A' || signal_api_call=='Y'){
 
-                entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
-                i++;
+
+                    xVals.add(split[1]);
+                    yVals.add(new Entry(i, Float.valueOf(close)));
+                    labels.add("abc");
+                    entries1.add(new BarEntry(i, Float.valueOf(vol)));
+                    labelsforvolume.add(Float.valueOf(vol));
+                    Xaxis_value.add(time);
+
+                    if (Float.valueOf(close) >= Float.valueOf(open)) {
+                        colors[i] = Color.parseColor("#1D8348");
+                    } else {
+                        colors[i] = Color.parseColor("#E74C3C");
+                    }
+
+                    entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
+                    i++;
+
+                }
             }
 
 
@@ -1365,6 +1403,8 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
 
         } catch (JSONException e) {
             e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
         BarDataSet set = new BarDataSet(entries1, "");
@@ -1390,6 +1430,32 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
         YAxis rightYAxis = chart.getAxisRight();
         rightYAxis.setEnabled(false);
 //
+    }
+
+
+
+    private static int differenceInMonths(Date d1, Date d2) {
+        Calendar c1 = Calendar.getInstance();
+        c1.setTime(d1);
+        Calendar c2 = Calendar.getInstance();
+        c2.setTime(d2);
+        int diff = 0;
+        if (c2.after(c1)) {
+            while (c2.after(c1)) {
+                c1.add(Calendar.MONTH, 1);
+                if (c2.after(c1)) {
+                    diff++;
+                }
+            }
+        } else if (c2.before(c1)) {
+            while (c2.before(c1)) {
+                c1.add(Calendar.MONTH, -1);
+                if (c1.before(c2)) {
+                    diff--;
+                }
+            }
+        }
+        return diff;
     }
 
 
@@ -1966,6 +2032,7 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
                     loadchartdata(holder.stockname.getText().toString());
                     GetPercentage(holder.stockname.getText().toString());
                     setcompanydetails();
+                    Foundamentals();
 
                 }
             });

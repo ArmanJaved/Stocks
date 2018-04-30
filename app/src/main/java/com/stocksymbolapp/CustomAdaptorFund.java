@@ -1,4 +1,4 @@
-package stocksymbolapp;
+package com.stocksymbolapp;
 
 import android.content.Context;
 import android.support.design.widget.Snackbar;
@@ -8,8 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.stocksymbolapp.R;
 
 import java.util.ArrayList;
 

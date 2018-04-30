@@ -1,4 +1,4 @@
-package stocksymbolapp;
+package com.stocksymbolapp;
 
 import android.content.Context;
 import android.widget.ImageView;

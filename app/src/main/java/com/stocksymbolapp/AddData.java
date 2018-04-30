@@ -1,11 +1,8 @@
-package stocksymbolapp;
+package com.stocksymbolapp;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -15,10 +12,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.stocksymbolapp.R;
 
 import java.text.SimpleDateFormat;
-import java.util.zip.Inflater;
 
 public class AddData {
 

@@ -28,20 +28,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SMDTS"
-                android:textStyle="italic|bold"
+                android:textStyle="bold"
                 android:fontFamily="sans-serif-medium"
-                android:textSize="16sp"
+                android:textSize="12sp"
                 android:textColor="#000" />
 
             <TextView
-                android:ellipsize="end"
                 android:layout_weight=".01"
                 android:id="@+id/companyname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="symbols asdhas kasdkj"
-                android:maxLines="1"
+                android:text=""
                 android:textStyle="normal"
+                android:ellipsize="end"
+                android:maxEms="10"
+                android:maxLines="1"
                 android:fontFamily="sans-serif-medium"
                 android:textSize="10sp"
                 android:textColor="#000" />
@@ -54,7 +55,7 @@
                 android:text=""
                 android:textStyle="italic"
                 android:fontFamily="sans-serif-medium"
-                android:textSize="16sp"
+                android:textSize="12sp"
                 android:textAlignment="textEnd"
                 android:textColor="#000" />
 
@@ -73,6 +74,11 @@
                 android:layout_height="230dp">
 
             </com.github.mikephil.charting.charts.CandleStickChart>
+            <com.github.mikephil.charting.charts.LineChart
+                android:visibility="gone"
+                android:id="@+id/asdlinechart"
+                android:layout_width="match_parent"
+                android:layout_height="240dp" />
 
         </LinearLayout>
 

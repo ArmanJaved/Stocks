@@ -1,15 +1,15 @@
-package stocksymbolapp;
+package com.stocksymbolapp;
 
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.NonReusable;
 import com.mindorks.placeholderview.annotations.Resolve;
 import com.mindorks.placeholderview.annotations.View;
-import com.stocksymbolapp.R;
 
 /**
  * Created by BrainPlow on 12/8/2017.
@@ -27,6 +27,9 @@ public class DrawerHeader {
     @View(R.id.emailTxt)
     private TextView emailTxt;
 
+    @View(R.id.contact)
+    private TextView contact;
+
 
     @View(R.id.home)
     private TextView top_gainers;
@@ -36,6 +39,9 @@ public class DrawerHeader {
 
     @View(R.id.help)
     private TextView help;
+
+    @View(R.id.invitefriend)
+    private Button invitefr ;
 
 
     @View(R.id.terms_priv)
@@ -94,6 +100,31 @@ public class DrawerHeader {
                 init.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
                 mContext.startActivity(init);
 
+            }
+        });
+
+        contact.setOnClickListener(new android.view.View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View v) {
+
+                Intent init = new Intent(mContext, MailSenderActivity.class);
+                init.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
+                mContext.startActivity(init);
+
+            }
+        });
+
+
+        invitefr.setOnClickListener(new android.view.View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View view) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                String shareBody = "Check out the great new stock market charting app! It has so many great features! http://splashcharts.com/download";
+                String sharesub = "Stock App";
+                intent.putExtra(Intent.EXTRA_SUBJECT, sharesub);
+                intent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                mContext.startActivity(Intent.createChooser(intent, "Invite friends via..."));
             }
         });
     }

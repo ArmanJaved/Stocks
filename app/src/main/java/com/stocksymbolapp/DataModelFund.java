@@ -1,4 +1,4 @@
-package stocksymbolapp;
+package com.stocksymbolapp;
 
 /**
  * Created by BrainPlow on 4/19/2018.

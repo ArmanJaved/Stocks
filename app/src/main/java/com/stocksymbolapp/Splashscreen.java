@@ -1,4 +1,4 @@
-package stocksymbolapp;
+package com.stocksymbolapp;
 
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -10,7 +10,10 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.stocksymbolapp.R;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Splashscreen extends FragmentActivity {
     public void onAttachedToWindow() {
@@ -50,11 +53,13 @@ public class Splashscreen extends FragmentActivity {
                         waited += 100;
                     }
 
-                    Intent init = new Intent(getApplicationContext(), MainActivity.class);
+
+                    Intent init = new Intent(getApplicationContext(), GainernLosers.class);
                     init.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
                     getApplicationContext().startActivity(init);
                 } catch (InterruptedException e) {
                     // do nothing
+
                 } finally {
                     Splashscreen.this.finish();
                 }
@@ -64,5 +69,6 @@ public class Splashscreen extends FragmentActivity {
         splashTread.start();
 
     }
+
 
 }

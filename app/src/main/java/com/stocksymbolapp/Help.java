@@ -32,7 +32,7 @@ public class Help extends AppCompatActivity {
         setContentView(R.layout.help);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Help");
+        getSupportActionBar().setTitle("FAQ");
 
 
 

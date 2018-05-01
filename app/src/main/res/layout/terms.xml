@@ -8,13 +8,13 @@
 
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="10dp"
         android:fillViewport="false">
 
     <LinearLayout
+        android:layout_margin="10dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -26,7 +26,7 @@
                     android:padding="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Terms/ Privacy"
+                    android:text="TERMS"
                     android:textStyle="bold"
                     android:textSize="25sp"
                     android:layout_marginTop="0dp"
@@ -40,37 +40,17 @@
             android:paddingLeft="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="‘TERMS and PRIVACY’ slide in menu items. Please past the below boilerplate from Finviz to be edited later."
+            android:text="Candl App and GoCandl.com Terms of Service"
             android:textStyle="bold"
             android:textSize="16sp"
             android:layout_marginTop="10dp"
-            android:textColor="#000" />
+            android:textColor="@color/colorPrimaryDark" />
         <TextView
 
             android:paddingLeft="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="PRIVACY POLICY FOR INFORMATION USE AT FINVIZ.COM
-Last updated on Jan 01, 2009
-FINVIZ.com, (We) are committed to maintaining the privacy of personal information that you provide to us when using the
-FINVIZ.com web site. This privacy policy describes how we treat personal information received about you when you visit
-www.finviz.com.
-Personal Information We Collect
-Personally identifiable information (“Personal Information”) is information that can be used to identify or contact you, such as your
-name, address, email address, telephone number or similar information. We only collect personal information on our web site that
-you choose to share with us, such as when:
-contacting us via the web site or email
-creating an user account
-creating personal content (presets, portfolios, private discussion)
-making an online purchase, or subscription to a service
-How We Use Information Collected
-We may use information in the following ways:
-For the purposes for which you specifically provided the information.
-To send you e-mail notifications about our new or existing products and services, special offers, or to otherwise contact you.
-To enhance existing features or develop new features, products and services.
-To provide advertisers and other third parties with aggregate information about our user base and usage patterns
-Except as specifically stated in this privacy policy, we will not share your personally identifiable information with any third parties
-outside of FINVIZ.com "
+            android:text="Welcome to the Candl App and GoCandl.com terms of service page. Herein and the following terms of service apply to all of Candl’s (referred to hereafter as “Candl App,” “Candl,” “GoCandl.com,” “us,” “we,” “our,” and otherwise implied) products and services. If you use our products or services, then these terms apply implicitly and explicitly to you as the user, viewer, or subscriber. When accessing our products and services, then you are acknowledging that you understand these Terms of Service and agree to follow them at all times. If you disagree to any portion of these Terms, do not continue to use the Candle App or GoCandl.com. "
             android:textStyle="normal"
             android:textSize="16sp"
             android:layout_marginTop="0dp"
@@ -81,148 +61,223 @@ outside of FINVIZ.com "
             android:paddingLeft="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Security  "
+            android:text="Notification of Updates to these Terms"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="@color/colorPrimaryDark"/>
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Candl is a growing company; we will update our Terms of Service as we continue to expand and offer our users more content. Any changes to our terms of service will be posted as they occur. It is your responsibility to check the Terms of Service on a frequent basis. We may engage in reasonable methods to advertise to our users any modifications to the Terms of Service, but that is not guaranteed. Once modifications to the Terms of Service are updated, then the Terms become effective immediately. If you don’t accept the updated Terms of Service, do not continue to use the Candl App or GoCandl.com."
             android:textStyle="normal"
             android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Restrictions on User Use of Candl Products and Services"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="We started the Candl brand of products and services because we have always been avid fans of the stock market. We have made many mistakes and learned many lessons. We have made and lost money in the stock market. As we worked tirelessly to build our products and services, we continued to trade. With that said, all that we have worked hard to create and share with our user base is strictly our own. Users of Candl products and services must be accessed manually and automated means of retrieving data from our products and services is strictly prohibited. Please be thoughtful when using our products and services. Do not tamper with or use non-public site areas. Do not interfere with or disrupt the access of any user, host, or network. Do not engage in any malicious attacks on any portion of our products or services. We have worked so hard to first build and now to maintain and expand what we have to offer to our users, please be respectful. We thank you in advance."
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Limited License "
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Information on our site is for personal use only. Personal use does not include use for business purposes, no matter how small you feel the business is. Under no circumstance, may the information provided on our website be copied, photocopied, republished, licensed, distributed, performed, displayed, uploaded, posted, translated, altered, retransmitted, broadcast in any way, exploited, used to create derivative works, or reduced to any electronic medium or machine-readable form, in whole or in part, without the prior written consent of Candl or GoCandl creators. Our site uses stock data that is licensed to us, allowing us to provide to the public. Your right to use the site will be forfeited immediately if the use of data is outside the bounds of personal use. Data is largely supplied by Intrinio.com and its services."
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Accuracy of Information and Investment Decisions"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="@color/colorPrimaryDark" />
+
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="All the information and data presented to users on the Candl App and GoCandl.com is for educational and entertainment purposes only. While we firmly believe in the quality of our data, it is not reviewed prior to being posted on the Candl App or the GoCandl website. The data comes from numerous sources and the website is created by human operators, who will inherently make mistakes from time to time. Data update frequencies may include real-time, 15-min, daily, weekly, monthly, and anywhere in between. We would like to catch all of these mistakes as they occur, but this is not possible with roughly stocks on the US market and data that is updating many, many times over the course of the trading day. Therefore, the content of this website should NEVER be relied upon as the sole basis for any investment decisions. We cannot be responsible or liable for any investment decisions made by our users. Investing is inherently risky. Any reliance by you as a user on the data provided on our website is at your own risk. You take sole responsibility for any investment decisions that you make. You assume any and all risk associated with your investment decisions irrespective of whether we or our third-party providers, affiliates, agents, or licensors hold positions in investment vehicles mentioned on the Candl App or GoCandl website. Prior to the execution of a stock trade, you are advised to consult with your broker or other financial representative to verify pricing and other information."
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Algorithms and Top Charts"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="@color/colorPrimaryDark" />
+
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Chart patterns and top lists and all original information through our services not licensed by or linked to external services is a copyright of the GoCandl.com and its services and not to be accessed by any user in any reason. The algorithms have been created to provide to users and general approximation of each pattern type to generate your own original thoughts and ideas. The chart patterns and top lists including but not limited to Top Gainers, Top losers, Multiple Top, Multiple Bottom, and Consolidation may or may not represent accurate or current information or accurate portrayal of a described pattern. All algorithms and list are "
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Content Changes and Service Availability"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="@color/colorPrimaryDark" />
+
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="As the owners of Candl App and GoCandl.com, we may choose to make updates or changes at any point in time. There is no guarantee that all features of all of our products and services will always be functioning or available. Content may be added, updated, or removed from the Candl App or GoCandl.com on a continuous basis. "
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Indemnification"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="@color/colorPrimaryDark" />
+
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Use of the Candl App or GoCandl.com requires that you agree to indemnify, defend and hold harmless all members of the Candl app and GoCandl.com team and organization. This includes, but is not limited to all officers, directors, owners, agents, third-party providers, licensors and licensees, and affiliates from any claim or demand, including reasonable attorneys’ fees, incurred by indemnified parties due to any breach by you or any user of your account of this Terms of Service. This includes any content you or any other user of your account creates, submits, transmits, modifies, or in any way make available through the Candl App or GoCandl.com. "
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Candl App and GoCandle.com Waiver"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="@color/colorPrimaryDark" />
+
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Our failure to enforce any terms of this agreement does not indicate a waiver of any of our rights or provisions outlined. We may choose to enforce any of these terms at any point while offering our services and products. "
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Severability"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="@color/colorPrimaryDark" />
+
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Should any portion of these Terms of Service be deemed invalid or unenforceable pursuant to current or future laws, then it is the intention of the parties (user and content owners) that the remainder of this Terms of Service shall not be affected, and it is also the intention of the parties that in lieu of each clause or provision that is illegal, invalid or unenforceable, there be added as a part of this Agreement a clause or provision as similar in terms to such illegal, invalid or unenforceable clause or provision as may be possible and be legal, valid and enforceable. Any errors within this agreement will not diminish the ability of this Terms of Service to be fully enforced. "
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+
+        <TextView
+
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PRIVACY"
+            android:textStyle="bold"
+            android:textSize="25sp"
             android:layout_marginTop="0dp"
             android:textColor="#607d8b" />
-
-        <TextView
-
-            android:paddingLeft="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="The personally information is stored in our limited-access servers. We will maintain safeguards to protect the security of these
-servers and your personally identifiable information. Online purchases made through our web site are processed securely by
-PayPal.com. When making a payment, we do not have access to your personal and credit card information.   "
-            android:textStyle="normal"
-            android:textSize="16sp"
-            android:layout_marginTop="0dp"
-            android:textColor="#000" />
-
-        <TextView
-
-            android:paddingLeft="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Links  "
-            android:textStyle="normal"
-            android:textSize="16sp"
-            android:layout_marginTop="0dp"
-            android:textColor="#607d8b" />
-
-        <TextView
-
-            android:paddingLeft="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="We may make content or services from other web sites including our co-branded web sites available to you from links located on
-www.finviz.com. These other web sites are not subject to this privacy policy. We recommend that you review the privacy policy at
-each such web site to determine how that site protects your privacy.   "
-            android:textStyle="normal"
-            android:textSize="16sp"
-            android:layout_marginTop="0dp"
-            android:textColor="#000" />
-
-
-        <TextView
-
-            android:paddingLeft="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Cookies   "
-            android:textStyle="normal"
-            android:textSize="16sp"
-            android:layout_marginTop="0dp"
-            android:textColor="#607d8b" />
-
-        <TextView
-
-            android:paddingLeft="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Cookies are pieces of information that a browser can record after visiting a web site. We may use cookies for technical purposes
-such as to enable better navigation through our site, or to store user preferences for interacting with the site. If you do not wish to
-have cookies stored on your machine, you can turn them off in your browser, it will not affect the overall functioning of the web site.  "
-            android:textStyle="normal"
-            android:textSize="16sp"
-            android:layout_marginTop="0dp"
-            android:textColor="#000" />
-
-
-        <TextView
-
-            android:paddingLeft="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text=" Internet-based Transfers   "
-            android:textStyle="normal"
-            android:textSize="16sp"
-            android:layout_marginTop="0dp"
-            android:textColor="#607d8b" />
-
-
-        <TextView
-
-            android:paddingLeft="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Given that the internet is a global environment, using the internet to collect and process personal data necessarily involves the
-transmission of data on an international basis. Therefore, by browsing www.finviz.com and communicating electronically with us you
-acknowledge and agree to our processing of personal data in this way.  "
-            android:textStyle="normal"
-            android:textSize="16sp"
-            android:layout_marginTop="0dp"
-            android:textColor="#000" />
-
-
-
-        <TextView
-
-            android:paddingLeft="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Custom Privacy Settings   "
-            android:textStyle="normal"
-            android:textSize="16sp"
-            android:layout_marginTop="0dp"
-            android:textColor="#607d8b" />
-
-
-        <TextView
-
-            android:paddingLeft="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="We allow registered users to select their preferred level of privacy. The additional privacy settings can be found in My Account > My
-Profile > Privacy Settings. "
-            android:textStyle="normal"
-            android:textSize="16sp"
-            android:layout_marginTop="0dp"
-            android:textColor="#000" />
-        <TextView
-
-            android:paddingLeft="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Comments and Questions   "
-            android:textStyle="normal"
-            android:textSize="16sp"
-            android:layout_marginTop="0dp"
-            android:textColor="#607d8b" />
-
-
-        <TextView
-
-            android:paddingLeft="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="If you have any questions, comments or concerns about our privacy policy, you may contact us. "
-            android:textStyle="normal"
-            android:textSize="16sp"
-            android:layout_marginTop="0dp"
-            android:textColor="#000" />
-
 
     </LinearLayout>
 

@@ -7,20 +7,24 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:fillViewport="true"
+        android:layout_height="match_parent">
+
 
     <LinearLayout
+        android:layout_margin="10dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-
 
                 <TextView
 
                     android:padding="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Help"
+                    android:text="Beginner"
                     android:textStyle="bold"
                     android:textSize="25sp"
                     android:layout_marginTop="0dp"
@@ -34,8 +38,8 @@
             android:paddingLeft="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Time Frames"
-            android:textStyle="normal"
+            android:text="Understanding different time frames"
+            android:textStyle="bold"
             android:textSize="16sp"
             android:layout_marginTop="10dp"
             android:textColor="#000" />
@@ -44,7 +48,18 @@
             android:paddingLeft="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="What is a candlestick chart "
+            android:text="1D (1 Day)"
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#607d8b" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="This shows price movement from the past 1 trading day, or the past 6.5 hours of data, excluding pre-market and after market. Each datapoint or candle represents a 1 minute time frame."
             android:textStyle="normal"
             android:textSize="16sp"
             android:layout_marginTop="0dp"
@@ -55,22 +70,11 @@
             android:paddingLeft="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="How candle stick charts are read  "
+            android:text="1W (1 Week)"
             android:textStyle="normal"
             android:textSize="16sp"
             android:layout_marginTop="0dp"
-            android:textColor="#000" />
-
-        <TextView
-
-            android:paddingLeft="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="What are the advantages of candlesticks   "
-            android:textStyle="normal"
-            android:textSize="16sp"
-            android:layout_marginTop="0dp"
-            android:textColor="#000" />
+            android:textColor="#607d8b" />
 
 
         <TextView
@@ -78,30 +82,7 @@
             android:paddingLeft="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Top gainers   "
-            android:textStyle="normal"
-            android:textSize="16sp"
-            android:layout_marginTop="0dp"
-            android:textColor="#000" />
-
-
-        <TextView
-
-            android:paddingLeft="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Top Losers   "
-            android:textStyle="normal"
-            android:textSize="16sp"
-            android:layout_marginTop="0dp"
-            android:textColor="#000" />
-
-        <TextView
-
-            android:paddingLeft="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Watchlist  "
+            android:text="This shows price movement from the past 1 trading week, or the past 5 market days of intraday data. Each datapoint or candle represents a 5 minute time frame. "
             android:textStyle="normal"
             android:textSize="16sp"
             android:layout_marginTop="0dp"
@@ -113,13 +94,427 @@
             android:paddingLeft="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Volume  "
+            android:text="3M (3 Month)"
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#607d8b" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="This shows price movement from past 3 months or 13 weeks. This is generally equivalent to 65 trading days (minus holidays). Each datapoint or candle represents a 1 day time frame. "
             android:textStyle="normal"
             android:textSize="16sp"
             android:layout_marginTop="0dp"
             android:textColor="#000" />
+
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1Y (1 Year)"
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#607d8b" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="This shows price movement from the past 1 year of trading data. Each datapoint or candle represents a 1 day time frame."
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="5Y (5 Years)"
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#607d8b" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="This shows price movement from the past 5 years of trading data. Each datapoint or candle represents a 1 week (5 trading day) time frame."
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="All (All Data)"
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#607d8b" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="This shows price movement from a maximum of the past 20 years, or the entire history of that particular company depending on the date of their IPO. Each datapoint or candle represents a 1 month time frame."
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+        <TextView
+
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Understanding a candlestick chart"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:textColor="#000" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="What it is, how to read it, and what advantages it offers
+A ‘candlestick’ chart or ‘candle’ chart is another means of displaying price data for a given stock in a given time frame as opposed to a line chart. Below are two examples of charts using TSLA (Tesla Inc) as an example. Each datapoint on the line chart displays on the close price for each datapoint within the chosen time frames. When the sections of the line is green, that indicates the stock prices was positive from the previous day's close price. When it is green, the price change was negative.
+In contrast, the Candlestick chart below shows a bar, sometimes with lines (or tails) out both the top and bottom of the bar. Each bar represents 4 different data points in the specified time frames per the chart below.
+"
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+        <ImageView
+            android:scaleType="fitXY"
+            android:layout_margin="20dp"
+            android:src="@drawable/capture"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+        <ImageView
+            android:scaleType="fitXY"
+            android:layout_margin="20dp"
+            android:src="@drawable/capture2"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+        <ImageView
+            android:scaleType="fitXY"
+            android:layout_margin="20dp"
+            android:src="@drawable/capture3"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+
+        <TextView
+
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="What are Top Gainers and Losers?"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:textColor="#000" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Top Gainers and Top Losers (shown in the app’s main slider menu) display the stocks during and after the last trading day that have gained or lost the greatest percentage from previous day’s close. Note: Often, these companies are fueled by earnings or a significant press release with highly elevated volatility. Caution is advised."
+            android:textStyle="normal"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+        <TextView
+
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="How is percent change calculated?"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:textColor="#000" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="normal"
+            android:text="The percent change, in most cases, is calculated using the closing prices of the selected current day’s prices and the close on the first day of the selected time period (1D, 1W, 1M, etc.). In the case of the 3M (3 month) and 1Y (1 year) chart where each datapoint or candle represents 1 day, the following calculation is used:
+[(Most current price today - Yesterday’s close)/Yesterday’s close] x 100
+Ex. [(50-40)/40)] x 100 = 25%
+"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+        <TextView
+
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="What is a watchlist used for?"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:textColor="#000" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="normal"
+            android:text="A watchlist is used to display frequently visited or user followed stocks, to quickly view their performance without the need to continually search each individually. The watchlist can also be a useful tool to track a particular stock’s price movement until you spot a desirable entry to purchase shares."
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+        <TextView
+
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Volume"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:textColor="#000" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="normal"
+            android:text="Volume is shown in a box below the line or candlestick chart. Each bar shows the volume for the corresponding time frame directly above that bar. This can be useful to spot elevated trading activity on a particular day or analyzing trends over a given time period."
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+        <TextView
+
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="What does NM and NA stand for in the fundamental data section?"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:textColor="#000" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="normal"
+            android:text="‘NM’ - Not Meaningful - When analyzing of company’s financials and metrics, you can use a variety of different methods. Occasionally, that include numerators and denominators in divisional fractions that are “Not Meaningful”. This can include reasons ranging from negative numbers, to volatile to track, too small to be significant, and more. For example, dividing by a negative number in the price to earnings ratio (P/E), you cannot divide by a negative number (negative ‘E’ or earnings).
+‘NA’ - Not available = Simply means the data is not available via our data provider.
+"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+        <TextView
+
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Advanced"
+            android:textStyle="bold"
+            android:textSize="25sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#607d8b" />
+
+
+        <TextView
+
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Included Exchanges"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:textColor="#000" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="normal"
+            android:text="Currently, we have access to the NYSE, Nasdaq, and Amex. This data is delivered as accurately as possible in updates that occur every 15 minutes. If there is an error in our data or a missing ticker symbol, please send us a message using the contact form in the slider menu and we will work quickly to correct it."
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+        <TextView
+
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Watchlist Mini-charts"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:textColor="#000" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="normal"
+            android:text="Mini-charts are to be used as a quick peek of how the stocks on your watchlist are behaving. They display a line chart of the past 1 trading day for any given stock at a glance. Click on the watchlist item to view a more detailed chart."
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+        <TextView
+
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Data Update Intervals"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:textColor="#000" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="normal"
+            android:text="In our regular version of the app, all stock data for the Nasdaq, NYSE, and AMEX is updated every 15 minutes. “Fundamental” data (if available) is updated on a weekly basis. If you are interested in real-time stock quotes, please send us a message using the contact form. We would like to hear your interest and include this feature as soon as possible."
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+
+        <TextView
+
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="After-hours data"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:textColor="#000" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="normal"
+            android:text="We currently do not offer after-hours data. However, if you are interested in after-hours stock quotes, send us a message using the contact form. We would like to hear your interest and include this feature as soon as possible."
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+        <TextView
+
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Chart Patterns"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:textColor="#000" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="normal"
+            android:text="Our chart patterns may or may not be accurate portrayals of the described pattern and to be used only for your own original idea generation purposes.
+
+Multiple Bottom: Stocks that have recently triggered a multiple bottom with four or more price bottoms, based on current price within a one-year timeframe, will be displayed. This pattern looks at stock charts that are down from 52-week or local high prices and bounce multiple times at their lowest points of support.
+
+Multiple Top: Stocks that have recently triggered a multiple top with four or more price tops, based on current price within a one-year timeframe, will be displayed. This pattern looks at stock charts that are up from 52-low or local low prices and bounce multiple times at their highest points of resistance.
+"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+        <TextView
+
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Data Source"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:textColor="#000" />
+
+        <TextView
+
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="normal"
+            android:text="Our data is source primarily from Intrinio in addition to small portions from AlphaVantage"
+            android:textSize="16sp"
+            android:layout_marginBottom="30dp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
 
     </LinearLayout>
+    </ScrollView>
 
 
 </LinearLayout>

@@ -839,38 +839,38 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
 
         if (signal_api_call=='I')
         {
-            url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+stockname+"&interval=1min&apikey=U3BSFX821P0F5N5W";
-            volleycallmethodapi(url);
+            url = "https://stockapps.herokuapp.com/API/get/1min/"+stockname+"/?format=json";
+            WeeklyYearlyAPi(url);
         }
         else if (signal_api_call=='W')
         {
-            url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+stockname+"&interval=15min&apikey=U3BSFX821P0F5N5W";
-            volleycallmethodapi(url);
+            url = "https://stockapps.herokuapp.com/API/get/intra/"+stockname+"/?format=json";
+            WeeklyYearlyAPi(url);
         }
 
         if (signal_api_call=='M')
         {
-            url = "https://api.intrinio.com/prices?identifier="+stockname+"&frequency=daily";
+            url = "https://stockapps.herokuapp.com/API/result/monthly/"+stockname+"/?format=json";
             WeeklyYearlyAPi(url);
 
         }
         else if (signal_api_call=='Y')
         {
-            url ="https://api.intrinio.com/prices?identifier="+stockname+"&frequency=daily";
+            url = "https://stockapps.herokuapp.com/API/result/1year/"+stockname+"/?format=json";
             WeeklyYearlyAPi(url);
         }
 
         else if (signal_api_call=='Z')
         {
 
-            url ="https://api.intrinio.com/prices?identifier="+stockname+"&frequency=weekly";
+            url = "https://stockapps.herokuapp.com/API/result/5year/"+stockname+"/?format=json";
             WeeklyYearlyAPi(url);
 
         }
 
         else if (signal_api_call=='A')
         {
-            url ="https://api.intrinio.com/prices?identifier="+stockname+"&frequency=monthly";
+            url = "https://stockapps.herokuapp.com/API/result/all/"+stockname+"/?format=json";
             WeeklyYearlyAPi(url);
         }
 
@@ -968,7 +968,7 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
                             JSONArray contacts = null;
                             JSONObject object = null;
                             object = new JSONObject(response);
-                            contacts = object.getJSONArray("data");
+                            contacts = object.getJSONArray("Result");
                             int s = contacts.length();
                             datawee = String.valueOf(contacts);
                             Weekly_yearly_parseJsonData(datawee);
@@ -1005,14 +1005,6 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
         ) {
 
 
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> params = new HashMap<String, String>();
-                String creds = String.format("%s:%s","788e3c656c0e4e0b579cad93b9efd853","c1c2a2c03556ee69689e4ac572892d53");
-                String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.NO_WRAP);
-                params.put("Authorization", auth);
-                return params;
-            }
 
         };
 
@@ -1221,10 +1213,6 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
             json = new JSONArray(jsonString);
 
             int length = json.length();
-            Date c = Calendar.getInstance().getTime();
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-            String currentdate = df.format(c);
-            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
             colors = null;
             colors = new int[length];
             Date d1;
@@ -1245,35 +1233,6 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
                 String [] split = time.split("-");
 
 
-
-
-
-
-                 d1 = f.parse(time);
-                 d2 = f.parse(currentdate);
-                int n = differenceInMonths(d1, d2);
-                if (n<3 && signal_api_call=='M') {
-
-
-                    xVals.add(split[1]);
-                    yVals.add(new Entry(i, Float.valueOf(close)));
-                    labels.add("abc");
-                    entries1.add(new BarEntry(i, Float.valueOf(vol)));
-                    labelsforvolume.add(Float.valueOf(vol));
-                    Xaxis_value.add(time);
-
-                    if (Float.valueOf(close) >= Float.valueOf(open)) {
-                        colors[i] = Color.parseColor("#1D8348");
-                    } else {
-                        colors[i] = Color.parseColor("#E74C3C");
-                    }
-
-                    entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
-                    i++;
-                }
-                else if (signal_api_call=='Z' || signal_api_call =='A' || signal_api_call=='Y'){
-
-
                     xVals.add(split[1]);
                     yVals.add(new Entry(i, Float.valueOf(close)));
                     labels.add("abc");
@@ -1290,7 +1249,7 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
                     entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
                     i++;
 
-                }
+
             }
 
 
@@ -1402,8 +1361,6 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
             leftYAxis.setEnabled(false);
 
         } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
             e.printStackTrace();
         }
 

@@ -57,6 +57,7 @@
 
 
         <LinearLayout
+            android:visibility="gone"
             android:background="#607d8b"
             android:orientation="horizontal"
             android:layout_width="match_parent"

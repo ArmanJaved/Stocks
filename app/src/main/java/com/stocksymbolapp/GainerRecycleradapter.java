@@ -220,7 +220,7 @@ public class GainerRecycleradapter extends RecyclerView.Adapter<GainerRecyclerad
         ////////////////////////CHART DISPLAY
         final ArrayList<String> Xaxis_value = new ArrayList<String>();
 
-        String url = "https://api.intrinio.com/prices?identifier="+namesymb+"&frequency=daily";
+        String url = "https://stockapps.herokuapp.com/API/result/monthly/"+namesymb+"/?format=json";
 
 
 
@@ -243,7 +243,7 @@ public class GainerRecycleradapter extends RecyclerView.Adapter<GainerRecyclerad
                             JSONArray contacts = null;
                             JSONObject object = null;
                             object = new JSONObject(response);
-                            contacts = object.getJSONArray("data");
+                            contacts = object.getJSONArray("Result");
                             int s = contacts.length();
                             String asd = String.valueOf(contacts);
 
@@ -261,10 +261,6 @@ public class GainerRecycleradapter extends RecyclerView.Adapter<GainerRecyclerad
                                 json = new JSONArray(asd);
 
                                 int length = json.length();
-                                Date c = Calendar.getInstance().getTime();
-                                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                                String currentdate = df.format(c);
-                                SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
                                 colors = null;
                                 colors = new int[length];
                                 Date d1;
@@ -293,11 +289,6 @@ public class GainerRecycleradapter extends RecyclerView.Adapter<GainerRecyclerad
                                     }
 
 
-                                    d1 = f.parse(time);
-                                    d2 = f.parse(currentdate);
-                                    int n = differenceInMonths(d1, d2);
-                                    if (n<3 ) {
-
                                         Xaxis_value.add(time);
 
                                         if (Float.valueOf(close) >= Float.valueOf(open)) {
@@ -310,7 +301,7 @@ public class GainerRecycleradapter extends RecyclerView.Adapter<GainerRecyclerad
                                         yVals.add(new Entry(i, Float.valueOf(close)));
                                         entries.add(new CandleEntry(i, Float.valueOf(high), Float.valueOf(low), Float.valueOf(open), Float.valueOf(close)));
                                         i++;
-                                    }
+
                                 }
 
 
@@ -420,8 +411,6 @@ public class GainerRecycleradapter extends RecyclerView.Adapter<GainerRecyclerad
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                            } catch (ParseException e) {
-                                e.printStackTrace();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -441,14 +430,6 @@ public class GainerRecycleradapter extends RecyclerView.Adapter<GainerRecyclerad
         ) {
 
 
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> params = new HashMap<String, String>();
-                String creds = String.format("%s:%s","788e3c656c0e4e0b579cad93b9efd853","c1c2a2c03556ee69689e4ac572892d53");
-                String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.NO_WRAP);
-                params.put("Authorization", auth);
-                return params;
-            }
 
         };
 
